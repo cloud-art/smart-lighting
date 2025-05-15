@@ -1,0 +1,17 @@
+version: "3.0"
+
+services:
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883/tcp"
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    stdin_open: true
+    tty: true
