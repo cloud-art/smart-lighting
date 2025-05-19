@@ -17,3 +17,5 @@ dist/
 *.py,cover
 
 .ipynb_checkpoints
+
+.env
