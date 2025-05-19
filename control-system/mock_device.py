@@ -1,18 +1,20 @@
 import json
 import random
 import time
+import os
 from datetime import datetime
 import paho.mqtt.client as mqtt
 
+MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER=os.getenv("MQTT_USER", "localhost")
 MQTT_PASS=int(os.getenv("MQTT_PASS", 1883))
-BROKER = os.getenv("MQTT_BROKER", "localhost")
-PORT = int(os.getenv("MQTT_PORT", 1883))
+
 TOPIC = "devices/lamp-post-1"
 
 client = mqtt.Client()
 client.username_pw_set(MQTT_USER, MQTT_PASS)
-client.connect(BROKER, PORT, 60)
+client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
 def generate_device_data():
     return {
@@ -36,7 +38,7 @@ try:
         payload = json.dumps(data)
         client.publish(TOPIC, payload)
         print(f"[{datetime.utcnow()}] Published to {TOPIC}: {payload}")
-        time.sleep(5)  # каждые 5 секунд
+        time.sleep(5)
 except KeyboardInterrupt:
     client.disconnect()
     print("Disconnected from broker.")

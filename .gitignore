@@ -1,10 +1,14 @@
-mosquitto
+/mosquitto/config
+/mosquitto/data
+/mosquitto/log
 
 __pycache__/
 *.py[cod]
 
-.venv/
 venv/
+.venv/
+*/.venv
+*/venv
 .env
 
 dist/

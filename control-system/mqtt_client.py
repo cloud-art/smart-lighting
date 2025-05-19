@@ -8,10 +8,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MQTT_USER=os.getenv("MQTT_USER", "localhost")
-MQTT_PASS=int(os.getenv("MQTT_PASS", 1883))
-BROKER = os.getenv("MQTT_BROKER", "localhost")
-PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_USER = os.getenv("MQTT_USER", "default_user")
+MQTT_PASS = os.getenv("MQTT_PASS", 0000)
+
 TOPIC = "devices/#"
 
 client = Client()
@@ -34,6 +35,6 @@ async def save_to_db(data):
 def start():
     client.on_connect = on_connect
     client.on_message = on_message
-    client.username_pw_set("user", "password")
-    client.connect(BROKER, PORT, 60)
+    client.username_pw_set(MQTT_USER, MQTT_PASS)
+    client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.loop_start()
