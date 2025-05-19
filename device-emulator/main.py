@@ -3,16 +3,16 @@ import random
 import time
 import os
 from datetime import datetime
-import paho.mqtt.client as mqtt
+from paho.mqtt.client import Client
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-MQTT_USER=os.getenv("MQTT_USER", "localhost")
-MQTT_PASS=int(os.getenv("MQTT_PASS", 0000))
+MQTT_USER = os.getenv("MQTT_USER", "localhost")
+MQTT_PASS = os.getenv("MQTT_PASS", 0000)
 
 TOPIC = "devices/lamp-post-1"
 
-client = mqtt.Client()
+client = Client()
 client.username_pw_set(MQTT_USER, MQTT_PASS)
 client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
@@ -37,7 +37,7 @@ try:
         data = generate_device_data()
         payload = json.dumps(data)
         client.publish(TOPIC, payload)
-        print(f"[{datetime.utcnow()}] Published to {TOPIC}: {payload}")
+        print(f"[{datetime.utcnow()}] Published to {TOPIC}: {payload} \n")
         time.sleep(5)
 except KeyboardInterrupt:
     client.disconnect()

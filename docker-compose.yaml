@@ -50,11 +50,15 @@ services:
       - MQTT_PORT=${MQTT_PORT}
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASS=${MQTT_PASS}
-
     ports:
       - "8000:8000"
-    volumes:
-      - ./control-system:/app
+    #    volumes:
+    #      - ./control-system:/app
+    develop:
+      watch:
+        - action: sync+restart
+          path: control-system/
+          target: /app
 
 volumes:
   postgres_data:
