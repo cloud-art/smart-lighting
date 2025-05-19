@@ -18,7 +18,7 @@ async def get_db():
 @app.on_event("startup")
 async def startup():
     await create_tables()
-    mqtt_client.start()
+    await mqtt_client.start()
 
 @app.get("/api/devices/")
 async def get_device_data(db: AsyncSession = Depends(get_db)):
