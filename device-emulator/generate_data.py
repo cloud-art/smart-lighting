@@ -110,7 +110,7 @@ def generate_data(datetime: datetime, weather: str):
         "ambient_light": round(ambient_light),
         "dimming_level": DEFAULT_DIMMING,
         "lighting_class": LIGHTING_CLASS,
-        "lamp_power": DEFAULT_DIMMING * 100,
+        "lamp_power": DEFAULT_DIMMING * 1.5,
         "weather": weather
     }
 

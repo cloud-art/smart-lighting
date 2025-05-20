@@ -2,6 +2,8 @@
 /mosquitto/data
 /mosquitto/log
 
+/device-emulator/data.json
+
 __pycache__/
 *.py[cod]
 

@@ -35,11 +35,27 @@ services:
     tty: true
     command: sh -c "/mosquitto-initialize.sh ${MQTT_USER} ${MQTT_PASS} && exec mosquitto -c /mosquitto/config/mosquitto.conf"
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   control-system:
     container_name: control-system
     build: ./control-system
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     environment:
       - DATABASE_HOST=db
@@ -50,6 +66,8 @@ services:
       - MQTT_PORT=${MQTT_PORT}
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASS=${MQTT_PASS}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "8000:8000"
     #    volumes:
