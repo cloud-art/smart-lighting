@@ -13,8 +13,8 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER = os.getenv("MQTT_USER", "localhost")
 MQTT_PASS = os.getenv("MQTT_PASS", 0000)
 
-PUBLISH_TOPIC = "devices/lamp-post-1"
-CONTROL_TOPIC = "devices/lamp-post-1/control"
+PUBLISH_TOPIC = "devices/1/data"
+CONTROL_TOPIC = "devices/1/control"
 
 class Command(Enum):
     SET_DIMMING = 'set_dimming'
@@ -61,11 +61,10 @@ def main():
             data = json.load(f)
 
         for hour_data in data:
+            hour_data["dimming_level"] = current_state["dimming_level"]
+            hour_data["lamp_power"] = current_state["dimming_level"] * 1.5
             payload = json.dumps(hour_data)
-
-            addited_payload = {**payload, "dimming_level": current_state["dimming_level"], "lamp_power":current_state["dimming_level"] * 1.5 }
-
-            client.publish(PUBLISH_TOPIC, addited_payload)
+            client.publish(PUBLISH_TOPIC, payload)
             print(f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n")
             time.sleep(5)
     except KeyboardInterrupt:

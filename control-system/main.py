@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import SessionLocal, engine, Base
 from models import DeviceData
-from mqtt_client import mqtt_client
+from mqtt.client import mqtt_client
 from sqlalchemy.future import select
 
 app = FastAPI()

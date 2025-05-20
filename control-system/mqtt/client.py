@@ -1,12 +1,11 @@
-import json
 from paho.mqtt.client import Client, MQTTMessage
 import asyncio
 import os
 from dotenv import load_dotenv
-from datetime import datetime
 import logging
 from tasks import handle_device_message
-from enum import Enum
+from mqtt.settings import RECIEVE_TOPIC
+from mqtt.utils import get_mqtt_device_from_message
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,42 +17,15 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER = os.getenv("MQTT_USER", "default_user")
 MQTT_PASS = os.getenv("MQTT_PASS", "0000")
 
-TOPIC = "devices/#"
-
-class Command(Enum):
-    SET_DIMMING = 'set_dimming'
-
-def get_mqtt_device_from_message(msg: MQTTMessage):
-    device = json.loads(msg.payload.decode())
-
-    if "timestamp" in device:
-        formatted_datetime = datetime.fromisoformat(device["timestamp"])
-        device["timestamp"] = formatted_datetime
-
-    if "serial_number" in device:
-        device["serial_number"] = int(device["serial_number"])
-    
-    if "car_count" in device:
-        device["car_count"] = int(device["car_count"])
-    
-    if "pedestrian_count" in device:
-        device["pedestrian_count"] = int(device["pedestrian_count"])
-
-    return device
-
 class MQTTClient:
     def __init__(self):
         self.client = Client()
         self._loop = None
 
-    def create_mqtt_payload(self, action: Command, value):
-        payload = {"action": action, "value": value}
-        return json.dumps(payload)
-
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             logger.info("Connected to MQTT Broker!")
-            client.subscribe(TOPIC)
+            client.subscribe(RECIEVE_TOPIC)
         else:
             logger.error(f"Connection failed with code {rc}")
 
@@ -62,9 +34,12 @@ class MQTTClient:
             logger.info(f"Message received on {msg.topic}")
             data = get_mqtt_device_from_message(msg)
             logger.info(f"Message content: {data}")
-            handle_device_message(data)
+            handle_device_message(data, self.client.publish)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
+
+    def publish(self, topic, payload):
+        self.client.publish(topic=topic, payload=payload)
 
     async def start(self):
         self._loop = asyncio.get_running_loop()
