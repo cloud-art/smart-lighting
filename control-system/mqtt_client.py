@@ -20,6 +20,24 @@ MQTT_PASS = os.getenv("MQTT_PASS", "0000")
 
 TOPIC = "devices/#"
 
+def map_device_data(device):
+    mapped_device = device
+
+    if "timestamp" in device:
+        formatted_datetime = datetime.fromisoformat(device["timestamp"])
+        mapped_device["timestamp"] = formatted_datetime
+
+    if "serial_number" in device:
+        mapped_device["serial_number"] = int(device["serial_number"])
+    
+    if "car_count" in device:
+        mapped_device["car_count"] = int(device["car_count"])
+    
+    if "pedestrian_count" in device:
+        mapped_device["pedestrian_count"] = int(device["pedestrian_count"])
+
+    return mapped_device
+
 class MQTTClient:
     def __init__(self):
         self.client = Client()
@@ -47,11 +65,10 @@ class MQTTClient:
             logger.info(f"Message received on {msg.topic}")
 
             data = json.loads(msg.payload.decode())
-            if "timestamp" in data:
-                data["timestamp"] = datetime.fromisoformat(data["timestamp"])
+            formatted_data = map_device_data(data)
 
-            logger.info(f"Message content: {data}")
-            asyncio.run_coroutine_threadsafe(self.save_to_db(data), self._loop)
+            logger.info(f"Message content: {formatted_data}")
+            asyncio.run_coroutine_threadsafe(self.save_to_db(formatted_data), self._loop)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 
