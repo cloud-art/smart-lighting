@@ -18,7 +18,6 @@ WEATHER_CHOISES = {
     "FOG": 'fog'
 }
 
-
 MAX_CARS_COUNT = 80
 MAX_PEDS_COUNT = 40
 
