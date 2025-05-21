@@ -10,7 +10,7 @@ from enum import Enum
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-MQTT_USER = os.getenv("MQTT_USER", "localhost")
+MQTT_USER = os.getenv("MQTT_USER", "default_user")
 MQTT_PASS = os.getenv("MQTT_PASS", 0000)
 
 PUBLISH_TOPIC = "devices/1/data"
