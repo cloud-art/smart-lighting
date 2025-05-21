@@ -1,38 +1,55 @@
-from celery import Celery
-from models import DeviceData
+from celery_app import celery_app
+from models import DeviceData, DeviceDataCalculatedDim
 from dim_calculating import calculate_dim_level
 import logging
 from models import DeviceData
 from database import SessionLocal
 from mqtt.utils import Command, create_mqtt_payload
 from mqtt.settings import get_publish_topic
-import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-REDIS_HOST = os.getenv("REDIS_HOST", 'localhost')
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
-
-CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
-
-celery = Celery('tasks', broker=CELERY_BROKER_URL)
-def save_device_to_db(data):
+def save_device_data_to_db(data):
     try:
         db = SessionLocal()
         device = DeviceData(**data)
         db.add(device)
         db.commit()
+        db.refresh(device)
         db.close()
         logger.info(f"Data saved: {data}")
+        return device
     except Exception as e:
         logger.error(f"Error saving to DB: {e}")
 
-@celery.task
-def handle_device_message(device, publish_fn):
-    calculated_dim_level = round(calculate_dim_level(device))
-    payload = create_mqtt_payload(Command.SET_DIMMING.value, calculated_dim_level)
-    publish_fn(get_publish_topic(device["serial_number"]), payload)
+def save_device_data_calculated_dim_to_db(data):
+    try:
+        db = SessionLocal()
+        device_data_calculated_dim = DeviceDataCalculatedDim(**data)
+        db.add(device_data_calculated_dim)
+        db.commit()
+        db.refresh(device_data_calculated_dim)
+        db.close()
+        logger.info(f"Data saved: {data}")
+        return device_data_calculated_dim
+    except Exception as e:
+        logger.error(f"Error saving to DB: {e}")
 
-    data_to_saving = {**device, "dimming_level": calculated_dim_level}
-    save_device_to_db(data_to_saving)
+@celery_app.task
+def save_calculated_dim_to_db(device_data_id, dim_level): 
+    save_device_data_calculated_dim_to_db({"device_data_id": device_data_id, "dimming_level": dim_level})
+
+@celery_app.task
+def process_device_data_dim_level(device_data, publish_fn):
+    calculated_dim_level = round(calculate_dim_level(device_data))
+    payload = create_mqtt_payload(Command.SET_DIMMING.value, calculated_dim_level)
+    publish_fn(get_publish_topic(device_data["serial_number"]), payload)
+    save_calculated_dim_to_db(device_data["id"], calculated_dim_level)
+    pass
+
+
+@celery_app.task
+def handle_mqtt_device_data_message(device_data, publish_fn):
+    new_device_data = save_device_data_to_db(device_data)
+    process_device_data_dim_level(new_device_data.__dict__, publish_fn)

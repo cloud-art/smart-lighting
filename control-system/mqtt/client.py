@@ -3,7 +3,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 import logging
-from tasks import handle_device_message
+from tasks import handle_mqtt_device_data_message
 from mqtt.settings import RECIEVE_TOPIC
 from mqtt.utils import get_mqtt_device_from_message
 
@@ -34,7 +34,7 @@ class MQTTClient:
             logger.info(f"Message received on {msg.topic}")
             data = get_mqtt_device_from_message(msg)
             logger.info(f"Message content: {data}")
-            handle_device_message(data, self.client.publish)
+            handle_mqtt_device_data_message(data, self.client.publish)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 

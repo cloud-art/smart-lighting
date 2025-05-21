@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime
+from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from database import Base
 from datetime import datetime
 
 class DeviceData(Base):
     __tablename__ = "device_data"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     timestamp = Column(DateTime, default=datetime.utcnow)
     serial_number = Column(Integer)
     latitude = Column(Float)
@@ -20,3 +20,9 @@ class DeviceData(Base):
     lighting_class = Column(String)
     lamp_power = Column(Float)
     weather = Column(String)
+
+class DeviceDataCalculatedDim(Base):
+    __tablename__ = "device_data_calculated_dim"
+
+    device_data_id = Column(Integer, ForeignKey('device_data.id'), primary_key=True, index=True)
+    dimming_level = Column(Float)
