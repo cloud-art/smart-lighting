@@ -131,7 +131,6 @@ def get_device_data_summary(
         "result": serialized_data
     }
 
-
 @app.get("/api/stats/hourly_averages/")
 def get_hourly_averages(
     db: Session = Depends(get_db),
