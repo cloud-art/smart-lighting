@@ -1,5 +1,5 @@
 import calendar
-from fastapi import FastAPI, Depends, Query, Request
+from fastapi import Body, FastAPI, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session, class_mapper
 from database import SessionLocal, engine, Base
 from models import DeviceData, DeviceDataCalculatedDim, DeviceDataCorrectedDim
@@ -129,6 +129,90 @@ def get_device_data_summary(
         "next": next_url,
         "count": total_count,
         "result": serialized_data
+    }
+
+@app.patch("/api/device_data_summary/{device_data_id}", response_model=Dict[str, Any])
+def update_corrected_dimming_level(
+    device_data_id: int,
+    corrected_dimming_level: float = Query(..., description="Новое значение corrected_dimming_level", ge=0, le=100),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    device_data = db.get(DeviceData, device_data_id)
+    if not device_data:
+        raise HTTPException(status_code=404, detail="Device data not found")
+    
+    corrected_dim = db.get(DeviceDataCorrectedDim, device_data_id)
+    
+    if corrected_dim:
+        corrected_dim.dimming_level = corrected_dimming_level
+    else:
+        corrected_dim = DeviceDataCorrectedDim(
+            device_data_id=device_data_id,
+            dimming_level=corrected_dimming_level
+        )
+        db.add(corrected_dim)
+    
+    db.commit()
+    
+    return {
+        "success": True,
+        "device_data_id": device_data_id,
+        "corrected_dimming_level": corrected_dimming_level
+    }
+
+@app.post("/api/device_data_summary/bulk_update/", response_model=Dict[str, Any])
+def bulk_update_corrected_dimming_level(
+    updates: List[Dict[str, Any]] = Body(),
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    results = {
+        "success": [],
+        "errors": []
+    }
+
+    for update in updates:
+        try:
+            device_data_id = update.get('device_data_id')
+            corrected_dimming_level = update.get('corrected_dimming_level')
+
+            if None in (device_data_id, corrected_dimming_level):
+                raise ValueError("Missing required fields")
+
+            device_data = db.get(DeviceData, device_data_id)
+            if not device_data:
+                raise ValueError(f"Device data with id {device_data_id} not found")
+
+            if not (0 <= corrected_dimming_level <= 100):
+                raise ValueError("corrected_dimming_level must be between 0 and 100")
+
+            corrected_dim = db.get(DeviceDataCorrectedDim, device_data_id)
+            
+            if corrected_dim:
+                corrected_dim.dimming_level = corrected_dimming_level
+            else:
+                corrected_dim = DeviceDataCorrectedDim(
+                    device_data_id=device_data_id,
+                    dimming_level=corrected_dimming_level
+                )
+                db.add(corrected_dim)
+
+            db.commit()
+            results["success"].append({
+                "device_data_id": device_data_id,
+                "corrected_dimming_level": corrected_dimming_level
+            })
+        except Exception as e:
+            db.rollback()
+            results["errors"].append({
+                "device_data_id": device_data_id if 'device_data_id' in locals() else None,
+                "error": str(e)
+            })
+
+    return {
+        "total_requests": len(updates),
+        "successful_updates": len(results["success"]),
+        "failed_updates": len(results["errors"]),
+        "results": results
     }
 
 @app.get("/api/stats/hourly_averages/")
