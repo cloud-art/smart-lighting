@@ -89,6 +89,27 @@ def get_device_data_calculated_dim(
         "result": serialized_data
     }
 
+@app.get("/api/device_data_corrected_dim/", response_model=Dict[str, Any])
+def get_device_data_calculated_dim(
+    request: Request,
+    db: Session = Depends(get_db),
+    page: int = Query(1, description="Номер страницы", ge=1),
+    page_size: int = Query(10, description="Количество записей на странице", ge=1, le=100)
+):
+    total_count = db.scalar(select(func.count()).select_from(DeviceDataCorrectedDim))
+    offset = (page - 1) * page_size
+    result = db.execute(select(DeviceDataCorrectedDim).offset(offset).limit(page_size))
+    data = result.scalars().all()
+    serialized_data = [model_to_dict(item) for item in data]
+    next_url = build_next_url(request, page, page_size, total_count)
+    
+    return {
+        "page": page,
+        "next": next_url,
+        "count": total_count,
+        "result": serialized_data
+    }
+
 @app.get("/api/device_data_summary/", response_model=Dict[str, Any])
 def get_device_data_summary(
     request: Request,
@@ -212,10 +233,9 @@ def bulk_update_corrected_dimming_level(
         "total_requests": len(updates),
         "successful_updates": len(results["success"]),
         "failed_updates": len(results["errors"]),
-        "results": results
     }
 
-@app.get("/api/stats/hourly_averages/")
+@app.get("/api/device_data/hourly_averages/")
 def get_hourly_averages(
     db: Session = Depends(get_db),
     days: int = Query(30, description="Количество дней для анализа", ge=1)
@@ -250,7 +270,7 @@ def get_hourly_averages(
         "avg_corrected_dim": float(row.avg_corrected_dim) if row.avg_corrected_dim is not None else None
     } for row in result]
 
-@app.get("/api/stats/weekday_averages/")
+@app.get("/api/device_data/weekday_averages/")
 def get_weekday_averages(
     db: Session = Depends(get_db),
     weeks: int = Query(12, description="Количество недель для анализа", ge=1)
@@ -275,10 +295,8 @@ def get_weekday_averages(
         .order_by("weekday")
     )
     
-    weekday_names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     return [{
-        "weekday": int(row.weekday),
-        "weekday_name": weekday_names[int(row.weekday)],
+        "day": int(row.weekday),
         "avg_car_count": float(row.avg_car_count) if row.avg_car_count is not None else None,
         "avg_traffic_speed": float(row.avg_traffic_speed) if row.avg_traffic_speed is not None else None,
         "avg_pedestrian_count": float(row.avg_pedestrian_count) if row.avg_pedestrian_count is not None else None,
@@ -287,7 +305,7 @@ def get_weekday_averages(
         "avg_corrected_dim": float(row.avg_corrected_dim) if row.avg_corrected_dim is not None else None
     } for row in result]
 
-@app.get("/api/stats/daily_averages/")
+@app.get("/api/device_data/daily_averages/")
 def get_daily_averages(
     db: Session = Depends(get_db),
     months: int = Query(6, description="Количество месяцев для анализа", ge=1)
