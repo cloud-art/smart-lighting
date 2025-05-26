@@ -1,3 +1,7 @@
-import { defineConfig } from 'unocss'
+import { defineConfig } from "unocss";
 
-export default defineConfig({})
+export default defineConfig({
+  theme: {
+    colors: { border: "var(--ant-color-border)" },
+  },
+});
