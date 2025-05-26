@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "control-system",
+      "path": "./control-system"
+    },
+    {
+      "name": "device-emulator",
+      "path": "./device-emulator"
+    },
+    {
+      "name": "frontend",
+      "path": "./frontend"
+    }
+  ]
+}
