@@ -50,8 +50,12 @@ export type DeviceDataHourlyAverages = DeviceDataAverages & {
   hour: number;
 };
 
-export type DeviceDataDayAverages = DeviceDataAverages & {
+export type DeviceDataWeekdayAverages = DeviceDataAverages & {
   day: number;
+};
+
+export type DeviceDataDayAverages = DeviceDataAverages & {
+  day_of_month: number;
 };
 
 export const getDeviceDataList = (config?: AxiosRequestConfig) => {
@@ -59,21 +63,21 @@ export const getDeviceDataList = (config?: AxiosRequestConfig) => {
 };
 
 export const getDeviceDataHourlyAverages = (config?: AxiosRequestConfig) => {
-  return client.get<DeviceDataHourlyAverages>(
+  return client.get<DeviceDataHourlyAverages[]>(
     ENDPOINT.concat("hourly_averages/"),
     config
   );
 };
 
 export const getDeviceDataWeekdayAverages = (config?: AxiosRequestConfig) => {
-  return client.get<DeviceDataDayAverages>(
+  return client.get<DeviceDataWeekdayAverages[]>(
     ENDPOINT.concat("weekday_averages/"),
     config
   );
 };
 
 export const getDeviceDataDailyAverages = (config?: AxiosRequestConfig) => {
-  return client.get<DeviceDataDayAverages>(
+  return client.get<DeviceDataDayAverages[]>(
     ENDPOINT.concat("daily_averages/"),
     config
   );

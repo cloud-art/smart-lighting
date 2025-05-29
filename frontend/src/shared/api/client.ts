@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { BACKEND_URL } from "../config";
+import { SL__BACKEND_URL } from "../config";
 
 export const instance = axios.create({
-  baseURL: BACKEND_URL,
+  baseURL: SL__BACKEND_URL,
 });
 
 export const client = {

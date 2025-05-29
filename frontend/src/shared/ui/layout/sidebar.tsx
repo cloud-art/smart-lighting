@@ -82,7 +82,7 @@ export const SideBar: FC<SideBarProps> = ({
                 key: text,
                 icon: icon,
                 label: text,
-                onClick: navigate(to),
+                onClick: () => navigate(to),
               }) as AntMenuItem
           )}
         />

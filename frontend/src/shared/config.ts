@@ -1,11 +1,11 @@
 type ENV_VARIABLES = {
-  BACKEND_URL: string;
+  SL__BACKEND_URL: string;
 };
 
 const env = import.meta.env;
 
-if (!("BACKEND_URL" in env)) {
-  throw new Error("provide BACKEND_URL env variable");
+if (!("SL__BACKEND_URL" in env)) {
+  throw new Error("provide SL__BACKEND_URL env variable");
 }
 
-export const { BACKEND_URL } = env as unknown as ENV_VARIABLES;
+export const { SL__BACKEND_URL } = env as unknown as ENV_VARIABLES;

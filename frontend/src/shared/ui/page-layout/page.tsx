@@ -22,7 +22,7 @@ export const AppPage: FC<AppPageProps> = ({
     <div
       className={clsx(
         "flex flex-col h-full overflow-auto",
-        gap === "lg" ? 8 : 6
+        gap === "lg" ? "gap-8" : "gap-6"
       )}
     >
       {isDef(title) && <Title level={1}>{title}</Title>}

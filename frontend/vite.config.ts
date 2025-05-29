@@ -13,5 +13,5 @@ export default defineConfig({
       babel: { plugins: [["babel-plugin-react-compiler", { target: "19" }]] },
     }),
   ],
-  envPrefix: "WATER_UTILITY__",
+  envPrefix: "SL__",
 });

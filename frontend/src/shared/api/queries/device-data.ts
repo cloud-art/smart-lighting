@@ -7,6 +7,7 @@ import {
   DeviceData,
   DeviceDataDayAverages,
   DeviceDataHourlyAverages,
+  DeviceDataWeekdayAverages,
   getDeviceDataDailyAverages,
   getDeviceDataHourlyAverages,
   getDeviceDataList,
@@ -36,34 +37,34 @@ export const deviceDataQueries = {
       ...options,
     }),
 
-  averages: () => [...deviceDataQueries.all(), "averages"],
+  averages: (key?: string) => [...deviceDataQueries.all(), "averages", key],
 
-  hourlyAverages: <TData extends object = DeviceDataHourlyAverages>({
+  hourlyAverages: <TData extends object = DeviceDataHourlyAverages[]>({
     params,
     ...options
-  }: BaseUseQueryOptions<DeviceDataHourlyAverages, TData> = {}) =>
+  }: BaseUseQueryOptions<DeviceDataHourlyAverages[], TData> = {}) =>
     queryOptions({
-      queryKey: [...deviceDataQueries.averages()],
+      queryKey: [...deviceDataQueries.averages("hourly")],
       queryFn: async ({ signal }) => getDeviceDataHourlyAverages({ signal }),
       ...options,
     }),
 
-  weekdayAverages: <TData extends object = DeviceDataDayAverages>({
+  weekdayAverages: <TData extends object = DeviceDataWeekdayAverages[]>({
     params,
     ...options
-  }: BaseUseQueryOptions<DeviceDataDayAverages, TData> = {}) =>
+  }: BaseUseQueryOptions<DeviceDataWeekdayAverages[], TData> = {}) =>
     queryOptions({
-      queryKey: [...deviceDataQueries.averages()],
+      queryKey: [...deviceDataQueries.averages("weekday")],
       queryFn: async ({ signal }) => getDeviceDataWeekdayAverages({ signal }),
       ...options,
     }),
 
-  dailyAverages: <TData extends object = DeviceDataDayAverages>({
+  dailyAverages: <TData extends object = DeviceDataDayAverages[]>({
     params,
     ...options
-  }: BaseUseQueryOptions<DeviceDataDayAverages, TData> = {}) =>
+  }: BaseUseQueryOptions<DeviceDataDayAverages[], TData> = {}) =>
     queryOptions({
-      queryKey: [...deviceDataQueries.averages()],
+      queryKey: [...deviceDataQueries.averages("daily")],
       queryFn: async ({ signal }) => getDeviceDataDailyAverages({ signal }),
       ...options,
     }),

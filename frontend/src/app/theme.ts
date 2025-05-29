@@ -41,6 +41,10 @@ export const themeConfig: ThemeConfig = {
       headerPadding: 0,
       headerHeight: "auto",
     },
+    Divider: {
+      margin: 0,
+      verticalMarginInline: 0,
+    },
     Menu: {
       activeBarBorderWidth: 0,
       colorBgContainer: "transparent",
@@ -54,6 +58,9 @@ export const themeConfig: ThemeConfig = {
       itemSelectedBg: "#0055FF33",
       fontSize: 14,
       iconSize: 20,
+    },
+    Tooltip: {
+      colorTextLightSolid: "#FFFFFF",
     },
   },
 };
