@@ -39,7 +39,7 @@ export const Layout: FC<LayoutProps> = ({
         />
 
         <main className="flex flex-1 flex-col h-full">
-          <div className="py-4 h-full min-h-0 overflow-auto">{children}</div>
+          <div className="p-4 h-full min-h-0 overflow-auto">{children}</div>
         </main>
       </div>
     </AntLayout>

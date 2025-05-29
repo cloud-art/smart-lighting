@@ -1,7 +1,7 @@
 import { HomeOutlined } from "@ant-design/icons";
 import type { FC } from "react";
 import { lazy } from "react";
-import { Route, Routes } from "react-router";
+import { Outlet, Route, Routes } from "react-router";
 import { pathKeys } from "~/shared/lib/router";
 import { Layout } from "~/shared/ui/layout";
 
@@ -17,7 +17,9 @@ const RootRoutes: FC = () => {
             menuItems={[
               { icon: <HomeOutlined />, text: "Главная", to: pathKeys.root },
             ]}
-          />
+          >
+            <Outlet />
+          </Layout>
         }
       >
         <Route index element={<HomePage />} />

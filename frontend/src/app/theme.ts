@@ -3,6 +3,21 @@ import { ThemeConfig } from "antd";
 export const themeConfig: ThemeConfig = {
   cssVar: true,
   token: {
+    fontFamily: [
+      "-apple-system",
+      "SFProDisplay",
+      "BlinkMacSystemFont",
+      "Segoe UI",
+      "Roboto",
+      "Helvetica Neue",
+      "Arial",
+      "Noto Sans",
+      "sans-serif",
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji",
+    ].join(","),
     fontSize: 16,
     fontWeightStrong: 600,
     fontSizeHeading1: 22,

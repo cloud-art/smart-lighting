@@ -37,7 +37,7 @@ export const AppSubPage: FC<AppSubPageProps> = ({
   return (
     <div className="flex flex-col gap-6">
       {hasBackButton && backButtonElement}
-      {isDef(title) && <Title level={4}>{title}</Title>}
+      {isDef(title) && <Title level={2}>{title}</Title>}
 
       <div className={containerClassName}>{children}</div>
     </div>

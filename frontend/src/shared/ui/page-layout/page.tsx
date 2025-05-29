@@ -25,7 +25,7 @@ export const AppPage: FC<AppPageProps> = ({
         gap === "lg" ? 8 : 6
       )}
     >
-      {isDef(title) && <Title level={3}>{title}</Title>}
+      {isDef(title) && <Title level={1}>{title}</Title>}
 
       <div className={clsx(containerClassName, "min-h-0 h-full ")}>
         {children}

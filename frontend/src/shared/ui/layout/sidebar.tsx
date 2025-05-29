@@ -60,7 +60,7 @@ export const SideBar: FC<SideBarProps> = ({
       width={isLaptopScreen ? 200 : "100%"}
       {...props}
     >
-      <div className="flex flex-col gap-3 overflow-auto">
+      <div className="flex flex-col gap-3 overflow-auto lg:pt-2">
         <div className="flex justify-between items-center gap-2">
           <Text className="pl-3" type="secondary">
             Меню
