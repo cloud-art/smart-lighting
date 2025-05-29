@@ -21,7 +21,7 @@ export const AppPage: FC<AppPageProps> = ({
   return (
     <div
       className={clsx(
-        "flex flex-col h-full overflow-auto",
+        "flex flex-col h-full overflow-auto p-4",
         gap === "lg" ? "gap-8" : "gap-6"
       )}
     >

@@ -30,7 +30,7 @@ export const Layout: FC<LayoutProps> = ({
         onBurgerMenuClick={() => setIsDrawerOpen((value) => !value)}
       />
 
-      <div className="flex h-full w-full">
+      <div className="flex h-full w-full min-h-0">
         <SideBar
           className={"lg-border-r-1 lg-border-border lg-border-r-solid"}
           isDrawerOpen={isDrawerOpen}
@@ -39,7 +39,7 @@ export const Layout: FC<LayoutProps> = ({
         />
 
         <main className="flex flex-1 flex-col h-full">
-          <div className="p-4 h-full min-h-0 overflow-auto">{children}</div>
+          <div className="h-full min-h-0 overflow-auto">{children}</div>
         </main>
       </div>
     </AntLayout>
