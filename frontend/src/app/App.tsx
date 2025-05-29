@@ -1,5 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
+import "antd/dist/reset.css";
 import ru from "antd/locale/ru_RU";
 import { StrictMode } from "react";
 import { BrowserRouter } from "react-router";
@@ -13,7 +14,9 @@ function App() {
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <ConfigProvider locale={ru} theme={themeConfig}>
-            <RootRoutes />
+            <AntdApp>
+              <RootRoutes />
+            </AntdApp>
           </ConfigProvider>
         </QueryClientProvider>
       </BrowserRouter>

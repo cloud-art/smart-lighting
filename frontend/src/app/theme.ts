@@ -1,6 +1,7 @@
 import { ThemeConfig } from "antd";
 
 export const themeConfig: ThemeConfig = {
+  cssVar: true,
   token: {
     fontSize: 16,
     fontWeightStrong: 600,
@@ -26,6 +27,8 @@ export const themeConfig: ThemeConfig = {
       headerHeight: "auto",
     },
     Menu: {
+      activeBarBorderWidth: 0,
+      colorBgContainer: "transparent",
       itemHeight: 36,
       itemMarginBlock: 2,
       itemMarginInline: 2,

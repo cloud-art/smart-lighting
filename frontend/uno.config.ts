@@ -2,6 +2,8 @@ import { defineConfig } from "unocss";
 
 export default defineConfig({
   theme: {
-    colors: { border: "var(--ant-color-border)" },
+    colors: {
+      border: "var(--ant-color-border)",
+    },
   },
 });

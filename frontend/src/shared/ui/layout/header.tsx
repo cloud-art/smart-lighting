@@ -33,7 +33,7 @@ export const Header: FC<HeaderProps> = ({
 
       <div
         className={clsx(
-          "rounded bg-[#0666FFCC] h-6.25 w-9.5",
+          "rounded bg-primary-bg h-6.25 w-9.5",
           onLogoClick && "cursor-pointer"
         )}
         onClick={onLogoClick}
