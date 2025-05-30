@@ -79,7 +79,7 @@ def get_device_data(
         "page": page,
         "next": next_url,
         "count": total_count,
-        "result": serialized_data
+        "results": serialized_data
     }
 
 @app.get("/api/device_data_calculated_dim/", response_model=Dict[str, Any])
@@ -100,7 +100,7 @@ def get_device_data_calculated_dim(
         "page": page,
         "next": next_url,
         "count": total_count,
-        "result": serialized_data
+        "results": serialized_data
     }
 
 @app.get("/api/device_data_corrected_dim/", response_model=Dict[str, Any])
@@ -121,7 +121,7 @@ def get_device_data_calculated_dim(
         "page": page,
         "next": next_url,
         "count": total_count,
-        "result": serialized_data
+        "results": serialized_data
     }
 
 @app.get("/api/device_data_summary/", response_model=Dict[str, Any])
@@ -163,7 +163,7 @@ def get_device_data_summary(
         "page": page,
         "next": next_url,
         "count": total_count,
-        "result": serialized_data
+        "results": serialized_data
     }
 
 @app.patch("/api/device_data_summary/{device_data_id}", response_model=Dict[str, Any])
