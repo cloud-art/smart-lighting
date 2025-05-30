@@ -23,7 +23,7 @@ export const Layout: FC<LayoutProps> = ({
 
   // #region Render
   return (
-    <AntLayout className="h-100dvh flex flex-col!">
+    <AntLayout className="h-100dvh w-100dvw flex flex-col!">
       <Header
         className="border-b-1 border-border border-b-solid"
         onLogoClick={onLogoClick}
@@ -38,8 +38,8 @@ export const Layout: FC<LayoutProps> = ({
           menuItems={menuItems}
         />
 
-        <main className="flex flex-1 flex-col h-full">
-          <div className="h-full min-h-0 overflow-auto">{children}</div>
+        <main className="flex flex-1 flex-col h-full w-full min-w-0">
+          <div className="h-full min-h-0 overflow-auto w-full">{children}</div>
         </main>
       </div>
     </AntLayout>

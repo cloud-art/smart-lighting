@@ -1,5 +1,3 @@
-import { notNullish } from "./is";
-
 export const DEFAULT_PAGE_SIZE = 20;
 
 export interface PaginatedResponse<T> {
@@ -11,24 +9,9 @@ export interface PaginatedResponse<T> {
 
 export interface PaginationParams {
   page?: number;
-  pageSize?: number;
+  page_size?: number;
 }
 
 export const handleError = (error: Error) => {
   console.error(error.message);
 };
-
-export function adaptPaginationParams({ pageSize, page }: PaginationParams) {
-  return {
-    page,
-    page_size: pageSize,
-  };
-}
-
-export function getPaginatedResponseNextPageParam({
-  next,
-}: PaginatedResponse<unknown>) {
-  return notNullish(next)
-    ? (new URL(next).searchParams.get("page") ?? undefined)
-    : undefined;
-}

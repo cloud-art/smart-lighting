@@ -5,6 +5,7 @@ import ru from "antd/locale/ru_RU";
 import { StrictMode } from "react";
 import { BrowserRouter } from "react-router";
 import { queryClient } from "~/shared/api/query-client";
+import "./index.css";
 import RootRoutes from "./RootRoutes";
 import { themeConfig } from "./theme";
 

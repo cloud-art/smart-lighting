@@ -28,7 +28,7 @@ export const StatisticChartTooltipContent: FC<
       <Title level={4}>{title}</Title>
 
       {data.map(({ label, value, color }) => (
-        <Flex gap={2} align="center">
+        <Flex key={label} gap={2} align="center">
           <Text color={color}>{label}:</Text>
           <Text>{renderValue(value)}</Text>
         </Flex>
