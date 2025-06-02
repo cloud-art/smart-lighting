@@ -33,6 +33,7 @@ export const themeConfig: ThemeConfig = {
     colorText: "#1C1E20",
   },
   components: {
+    Button: { primaryColor: "#FFFFFF" },
     Layout: {
       bodyBg: "#FFFFFF",
       headerBg: "#FFFFFF",

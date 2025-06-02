@@ -1,7 +1,10 @@
+import { EditOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Table, TableColumnsType } from "antd";
+import { Button, Flex, Table, TableColumnsType, TableProps } from "antd";
 import { format, parseISO } from "date-fns";
-import { useState, type FC } from "react";
+import { Key, useEffect, useState, type FC } from "react";
+import { DeviceCorrectedDimmingUpdateModal } from "~/features/change-device-data-dim";
+import { DeviceCorrectedDimmingBulkUpdateModal } from "~/features/change-device-data-dim/ui/DeviceCorrectedDimmingBulkUpdateModal";
 import { deviceDataSummaryQueries } from "~/shared/api/queries/device-data-summary";
 import { DeviceDataSummary } from "~/shared/api/services/device-data-summary";
 import { PaginationParams } from "~/shared/lib/api";
@@ -17,16 +20,21 @@ const DevicesPage: FC = () => {
     page: 1,
   });
 
-  const deviceDataSummaryQuery = useQuery(
-    deviceDataSummaryQueries.list({
+  const [isMultipleMode, setIsMultipleMode] = useState(false);
+  const [selectedDevices, setSelectedDevices] = useState<number[]>([]);
+
+  const deviceDataSummaryQuery = useQuery({
+    ...deviceDataSummaryQueries.list({
       params: pagination,
-    })
-  );
+    }),
+    placeholderData: (data) => data,
+  });
 
   const tableColumns: TableColumnsType<DeviceDataSummary> = [
     {
       dataIndex: "timestamp",
       title: "Время",
+      fixed: "left",
       align: "left",
       render: (datetime: string) => {
         const parsedDate = parseISO(datetime);
@@ -68,8 +76,46 @@ const DevicesPage: FC = () => {
       dataIndex: "corrected_dimming_level",
       title: "Экспертное значение",
       fixed: "right",
+      render: (value: string | null | undefined, record) => {
+        let formatedValue = value;
+        if (value === undefined || value === null) {
+          formatedValue = "-";
+        }
+
+        return (
+          <Flex gap={8} justify="space-around" align="center">
+            {formatedValue}
+
+            <DeviceCorrectedDimmingUpdateModal
+              form={{
+                initialValues: {
+                  id: record.id,
+                  corrected_dimming_level: record.corrected_dimming_level,
+                },
+              }}
+              idFormItem={{ hidden: true }}
+              renderButton={(onClick) => (
+                <Button type="text" icon={<EditOutlined />} onClick={onClick} />
+              )}
+            />
+          </Flex>
+        );
+      },
     },
   ];
+
+  const rowSelection: TableProps<DeviceDataSummary>["rowSelection"] =
+    isMultipleMode
+      ? {
+          selectedRowKeys: selectedDevices,
+          onChange: (keys: Key[]) => {
+            const newSelectedDevices = keys.filter(
+              (key) => typeof key === "number"
+            );
+            setSelectedDevices(newSelectedDevices);
+          },
+        }
+      : undefined;
 
   const renderDeviceTableColumns = (
     columns: TableColumnsType<DeviceDataSummary>
@@ -77,18 +123,47 @@ const DevicesPage: FC = () => {
     columns.map((column) => ({
       align: "center",
       width: 100,
+      render: (value: unknown) => {
+        if (value === null || value === undefined) return "-";
+        return value;
+      },
       ...column,
     }));
 
+  useEffect(() => {
+    setSelectedDevices([]);
+  }, [isMultipleMode]);
+
   return (
-    <AppPage title="Устройства">
+    <AppPage title="Устройства" containerClassName="flex flex-col gap-2">
+      <Flex gap={8} align="center" justify="space-between">
+        <Button onClick={() => setIsMultipleMode((v) => !v)}>
+          {isMultipleMode
+            ? "Выключить режим изменения"
+            : "Включить режим изменения"}
+        </Button>
+
+        {isMultipleMode === true && (
+          <DeviceCorrectedDimmingBulkUpdateModal
+            onSuccess={() => setIsMultipleMode(false)}
+            renderButton={(onClick) => (
+              <Button onClick={onClick} type="primary">
+                Изменить
+              </Button>
+            )}
+            deviceDataIds={selectedDevices}
+          />
+        )}
+      </Flex>
+
       <Table
         sticky
         size="small"
         columns={renderDeviceTableColumns(tableColumns)}
         dataSource={deviceDataSummaryQuery.data?.results}
-        loading={deviceDataSummaryQuery.isLoading}
+        loading={deviceDataSummaryQuery.isFetching}
         rowKey={(record) => record.id}
+        rowSelection={rowSelection}
         pagination={{
           current: pagination.page,
           pageSize: pagination.page_size,

@@ -29,6 +29,11 @@ export type DeviceDataSummaryUpdateBody = {
   corrected_dimming_level: number;
 };
 
+export type DeviceDataSummaryBulkUpdateBody = {
+  device_data_id: number;
+  corrected_dimming_level: number;
+};
+
 export type DeviceDataSummaryBulkUpdateResponse = {
   total_requests: number;
   successful_updates: DeviceDataSummaryUpdateData[];
@@ -45,7 +50,7 @@ export const patchDeviceDataSummary = (
   config?: AxiosRequestConfig
 ) => {
   return client.patch<DeviceDataSummaryUpdateResponse>(
-    ENDPOINT.concat(`device_data_summary/${id}/`),
+    ENDPOINT.concat(`${id}/`),
     data,
     config
   );
@@ -56,7 +61,7 @@ export const deviceDataSummaryBulkUpdate = (
   config?: AxiosRequestConfig
 ) => {
   return client.post<DeviceDataSummaryBulkUpdateResponse>(
-    ENDPOINT.concat("device_data_summary/bulk_update/"),
+    ENDPOINT.concat("bulk_update/"),
     data,
     config
   );
