@@ -167,11 +167,19 @@ def get_device_data_summary(
     }
 
 @app.patch("/api/device_data_summary/{device_data_id}", response_model=Dict[str, Any])
-def update_corrected_dimming_level(
+async def update_corrected_dimming_level(
     device_data_id: int,
-    corrected_dimming_level: float = Query(..., description="Новое значение corrected_dimming_level", ge=0, le=100),
+    request: Request,
     db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
+    body = await request.json()
+    corrected_dimming_level = body.get("corrected_dimming_level")
+
+    if corrected_dimming_level is None:
+        raise HTTPException(status_code=422, detail="corrected_dimming_level is required")
+    if not isinstance(corrected_dimming_level, (int, float)) or corrected_dimming_level < 0 or corrected_dimming_level > 100:
+        raise HTTPException(status_code=422, detail="corrected_dimming_level must be a number between 0 and 100")
+
     device_data = db.get(DeviceData, device_data_id)
     if not device_data:
         raise HTTPException(status_code=404, detail="Device data not found")
