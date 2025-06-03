@@ -17,8 +17,7 @@ ADD . /app
 RUN --mount=type=cache,target=/root/.pnpm \
     pnpm install 
 
-RUN --mount=type=bind,source=.env,target=.env \
-    pnpm build
+RUN pnpm build
 
 ################################################################################
 FROM nginx:${NGINX_VERSION}-alpine
