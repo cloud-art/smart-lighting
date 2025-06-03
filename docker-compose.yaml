@@ -78,6 +78,13 @@ services:
           path: control-system/
           target: /app
 
+  frontend:
+    container_name: frontend-conteiner
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:
   redis_data:

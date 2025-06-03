@@ -11,7 +11,7 @@ export function useApiErrorHandler() {
       const errorFieldValues = Object.entries(errorValues).map(
         ([key, value]) => ({
           name: key,
-          errors: Array.isArray(value) ? value : [value],
+          errors: (Array.isArray(value) ? value : [value]) as string[],
         })
       );
 
