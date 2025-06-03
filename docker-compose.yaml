@@ -81,8 +81,6 @@ services:
   frontend:
     container_name: frontend-conteiner
     build: ./frontend
-    environment:
-      - SL__BACKEND_URL=control-system
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
     restart: unless-stopped
