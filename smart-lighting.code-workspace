@@ -15,6 +15,10 @@
     {
       "name": "frontend",
       "path": "./frontend"
+    },
+    {
+      "name": "ai-model",
+      "path": "./ai-model"
     }
   ]
 }
