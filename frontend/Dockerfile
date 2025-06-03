@@ -25,7 +25,7 @@ FROM nginx:${NGINX_VERSION}-alpine
 
 COPY --from=build /app/dist /opt/public
 
-EXPOSE 80
+EXPOSE 8080
 
 HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
   CMD curl -f http://127.0.0.1 || exit 1
