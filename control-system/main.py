@@ -1,5 +1,6 @@
 import calendar
 from fastapi import Body, FastAPI, Depends, HTTPException, Query, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, class_mapper
 from database import SessionLocal, engine, Base
 from models import DeviceData, DeviceDataCalculatedDim, DeviceDataCorrectedDim
@@ -10,6 +11,8 @@ from typing import List, Dict, Any
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 from fastapi.middleware.cors import CORSMiddleware
+import io
+import csv
 
 app = FastAPI()
 
@@ -365,3 +368,72 @@ def get_daily_averages(
         "avg_calculated_dim": float(row.avg_calculated_dim) if row.avg_calculated_dim is not None else None,
         "avg_corrected_dim": float(row.avg_corrected_dim) if row.avg_corrected_dim is not None else None
     } for row in result]
+
+
+@app.get("/api/device_data/export_csv/")
+async def export_device_data_to_csv(
+    db: Session = Depends(get_db),
+    days: int = Query(None, description="Количество дней для экспорта", ge=1),
+    serial_number: int = Query(None, description="Фильтр по серийному номеру")
+):
+    query = (
+        select(
+            DeviceData,
+            DeviceDataCorrectedDim.dimming_level.label("corrected_dimming_level")
+        )
+        .join(DeviceDataCorrectedDim, DeviceData.id == DeviceDataCorrectedDim.device_data_id)
+    )
+    
+    if days is not None:
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+        query = query.where(DeviceData.timestamp.between(start_date, end_date))
+    
+    if serial_number is not None:
+        query = query.where(DeviceData.serial_number == serial_number)
+    
+    result = db.execute(query)
+    data = result.all()
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    headers = [
+        "id", "timestamp", "serial_number", "latitude", "longitude",
+        "car_count", "traffic_speed", "traffic_density",
+        "pedestrian_count", "pedestrian_density", "ambient_light",
+        "lighting_class", "lamp_power", "weather",
+        "dimming_level"
+    ]
+    writer.writerow(headers)
+    
+    # Данные
+    for row in data:
+        device_data = row.DeviceData
+        writer.writerow([
+            device_data.id,
+            device_data.timestamp.isoformat(),
+            device_data.serial_number,
+            device_data.latitude,
+            device_data.longitude,
+            device_data.car_count,
+            device_data.traffic_speed,
+            device_data.traffic_density,
+            device_data.pedestrian_count,
+            device_data.pedestrian_density,
+            device_data.ambient_light,
+            device_data.lighting_class,
+            device_data.lamp_power,
+            device_data.weather,
+            row.corrected_dimming_level
+        ])
+    
+    output.seek(0)
+
+    filename = f"device_data_export_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
