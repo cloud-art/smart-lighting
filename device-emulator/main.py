@@ -9,9 +9,9 @@ from enum import Enum
 
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
-MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
 MQTT_USER = os.getenv("MQTT_USER", "default_user")
-MQTT_PASS = os.getenv("MQTT_PASS", 0000)
+MQTT_PASS = os.getenv("MQTT_PASS", "0000")
 
 PUBLISH_TOPIC = "devices/1/data"
 CONTROL_TOPIC = "devices/1/control"
@@ -66,7 +66,7 @@ def main():
             payload = json.dumps(hour_data)
             client.publish(PUBLISH_TOPIC, payload)
             print(f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n")
-            time.sleep(5)
+            time.sleep(1)
     except KeyboardInterrupt:
         client.disconnect()
         print("Disconnected from broker.")
