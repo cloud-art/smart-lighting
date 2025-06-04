@@ -1,12 +1,12 @@
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from database import Base
-from datetime import datetime
+from datetime import datetime,UTC
 
 class DeviceData(Base):
     __tablename__ = "device_data"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now(tz=UTC))
     serial_number = Column(Integer)
     latitude = Column(Float)
     longitude = Column(Float)
