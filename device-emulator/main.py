@@ -66,7 +66,7 @@ def main():
             payload = json.dumps(hour_data)
             client.publish(PUBLISH_TOPIC, payload)
             print(f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n")
-            time.sleep(1)
+            time.sleep(2.5)
     except KeyboardInterrupt:
         client.disconnect()
         print("Disconnected from broker.")

@@ -3,13 +3,18 @@ import json
 from datetime import datetime,timedelta
 from dateutil.relativedelta import relativedelta
 from tqdm import tqdm
-
+from enum import Enum
 
 SERIAL_NUMBER = "1"
 COORDINATES = (47.224860, 39.702285)
 LIGHTING_CLASS = "B1"
 START_DATETIME = datetime.now() - relativedelta(months=6)
 DEFAULT_DIMMING = 0
+
+class ControlType(Enum):
+    SIMPLE_RULES = "simple_rules",
+    AI_MODEL = "ai_model"
+
 
 WEATHER_CHOISES = {
     "CLEAR": 'clear',
@@ -102,6 +107,7 @@ def generate_data(datetime: datetime, weather: str):
         "latitude": COORDINATES[0],
         "longitude": COORDINATES[1],
         "car_count": cars,
+        "control_type": ControlType.AI_MODEL.value,
         "traffic_speed": round(speed, 2),
         "traffic_density": round(traffic_density, 2),
         "pedestrian_count": peds,
