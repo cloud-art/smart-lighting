@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def save_device_data_to_db(data):
+    logger.info(data)
     try:
         db = SessionLocal()
         device = DeviceData(**data)
