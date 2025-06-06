@@ -1,12 +1,14 @@
 import json
-from typing import Literal, TypedDict
+from typing import TypedDict, Union
 from paho.mqtt.client import MQTTMessage
 from datetime import datetime
+from common import LightingClass, Weather
 from mqtt.settings import Command
 
-LightingClass = Literal["A1", "B1", "C1", "D1"]
+import logging
 
-Weather = Literal["clear", "rainy", "cloudly"]
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class DeviceDataRawMessage(TypedDict):
     timestamp: str
@@ -43,9 +45,15 @@ class DeviceDataMessage(TypedDict):
     weather: Weather
 
 
-def create_mqtt_payload(action: Command, value):
+def create_mqtt_payload(action: Command, value: Union[str, int, float, bool]):
     payload = {"action": action, "value": value}
-    return json.dumps(payload)
+    try: 
+        json_payload = json.dumps(payload)
+        return json_payload
+    except Exception as e:
+        logger.error(f"Error json serializing: {e}")
+
+
 
 def mqtt_raw_device_message_to_device_message(raw_device_message: DeviceDataRawMessage) -> DeviceDataMessage:
     return {**raw_device_message,

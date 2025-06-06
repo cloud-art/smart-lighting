@@ -1,11 +1,26 @@
+from typing import TypedDict
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
+from common import CONTROL_TYPE
 from database import Base
 from datetime import datetime,UTC
-from enum import Enum
 
-class ControlType(Enum):
-    SIMPLE_RULES = "simple_rules",
-    AI_MODEL = "ai_model"
+class DeviceDataDict(TypedDict):
+    id: int
+    timestamp: datetime
+    serial_number: int
+    control_type: CONTROL_TYPE
+    latitude: float
+    longitude: float
+    car_count: int
+    traffic_speed: float
+    traffic_density: float
+    pedestrian_count: int
+    pedestrian_density: float
+    ambient_light: float
+    dimming_level: float
+    lighting_class: str
+    lamp_power: float
+    weather: str
 
 class DeviceData(Base):
     __tablename__ = "device_data"

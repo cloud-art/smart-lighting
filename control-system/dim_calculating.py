@@ -1,6 +1,8 @@
 from enum import Enum
 import logging
 
+from models import DeviceDataDict
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -46,7 +48,7 @@ def compare_dimming_with_multiplier(multiplier: float) -> DimmingLevel:
     return closest_level
 
 
-def calculate_dim_level(device) -> int:
+def calculate_dim_level(device: DeviceDataDict) -> int:
     dimming_multiplier = 0
     ambient_light = device["ambient_light"]
     traffic_density = device["traffic_density"]
