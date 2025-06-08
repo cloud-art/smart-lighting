@@ -1,0 +1,9 @@
+{
+  "python.analysis.autoImportCompletions": true,
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
+  "files.autoSave": "onFocusChange",
+  "isort.args": ["--profile", "black"]
+}

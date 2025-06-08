@@ -55,6 +55,7 @@ export const DeviceCorrectedDimmingUpdateModal: FC<
 
   return (
     <ModalButton
+      destroyOnHidden
       ref={modalButtonRef}
       title="Изменение данных устройства"
       onOk={handleSubmit}
