@@ -1,16 +1,15 @@
-from typing import Any, Generic, List, TypeVar
+from typing import Any
 from urllib.parse import urlencode
 
 from schemas.base import PaginatedResponse
 
-T = TypeVar("T")
 
-
-class Pagination(Generic[T]):
+class Pagination[T]:
+    @staticmethod
     def paginate(
-        self, request: Any, items: List[T], page: int, page_size: int, total_count: int
+        request: Any, items: list[T], page: int, page_size: int, total_count: int
     ) -> PaginatedResponse[T]:
-        next_url = self.build_next_url(request, page, page_size, total_count)
+        next_url = Pagination.build_next_url(request, page, page_size, total_count)
 
         return PaginatedResponse[T](
             page=page, next=next_url, count=total_count, results=items

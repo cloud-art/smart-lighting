@@ -1,28 +1,65 @@
-from typing import Any, Dict
-
-from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from models.device import Device
-from schemas.device import DeviceDBItem
-from utils.pagination import build_next_url
+from models.device import DeviceModel
+from models.device_data import DeviceDataModel
+from models.device_data_calculated_dim import DeviceDataCalculatedDimModel
+from models.device_data_corrected_dim import DeviceDataCorrectedDimModel
+from repositories.device import DeviceRepository
+from repositories.device_data import DeviceDataRepository
+from repositories.device_data_calculated_dim import DeviceDataCalculatedDimRepository
+from repositories.device_data_corrected_dim import DeviceDataCorrectedDimRepository
+from schemas.device import DeviceBaseSchema, DeviceSchema
+from schemas.device_data import DeviceDataCreateSchema, DeviceDataSchema
+from schemas.device_data_dim_info import (
+    DeviceDataDimInfoDBItem,
+    DeviceDataDimInfoSchema,
+)
+from services.base import BaseCRUDService
 
 
-class DeviceService:
-    @staticmethod
-    def get_device_data(
-        db: Session, request: Any, page: int = 1, page_size: int = 10
-    ) -> Dict[str, Any]:
-        total_count = db.scalar(select(func.count()).select_from(Device))
-        offset = (page - 1) * page_size
-        result = db.execute(select(Device).offset(offset).limit(page_size))
-        data = result.scalars().all()
-        serialized_data = [DeviceDBItem(item) for item in data]
-        next_url = build_next_url(request, page, page_size, total_count)
+class DeviceDataService(
+    BaseCRUDService[
+        DeviceDataModel,
+        DeviceDataSchema,
+        DeviceDataCreateSchema,
+    ]
+):
+    def __init__(self, db: Session):
+        repository = DeviceDataRepository(db)
+        super().__init__(repository)
 
-        return {
-            "page": page,
-            "next": next_url,
-            "count": total_count,
-            "results": serialized_data,
-        }
+
+class DeviceDataCalculatedDimService(
+    BaseCRUDService[
+        DeviceDataCalculatedDimModel,
+        DeviceDataDimInfoDBItem,
+        DeviceDataDimInfoSchema,
+    ]
+):
+    def __init__(self, db: Session):
+        repository = DeviceDataCalculatedDimRepository(db)
+        super().__init__(repository)
+
+
+class DeviceDataCorrectedDimService(
+    BaseCRUDService[
+        DeviceDataCorrectedDimModel,
+        DeviceDataDimInfoDBItem,
+        DeviceDataDimInfoSchema,
+    ]
+):
+    def __init__(self, db: Session):
+        repository = DeviceDataCorrectedDimRepository(db)
+        super().__init__(repository)
+
+
+class DeviceService(
+    BaseCRUDService[
+        DeviceModel,
+        DeviceSchema,
+        DeviceBaseSchema,
+    ]
+):
+    def __init__(self, db: Session):
+        repository = DeviceRepository(db)
+        super().__init__(repository)

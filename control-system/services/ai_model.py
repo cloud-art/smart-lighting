@@ -1,5 +1,3 @@
-from typing import Dict
-
 import joblib
 import pandas as pd
 

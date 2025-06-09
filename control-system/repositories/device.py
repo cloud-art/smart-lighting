@@ -1,24 +1,34 @@
 from sqlalchemy.orm import Session
 
 from models.device import DeviceModel
+from models.device_data import DeviceDataModel
+from models.device_data_calculated_dim import DeviceDataCalculatedDimModel
+from models.device_data_corrected_dim import DeviceDataCorrectedDimModel
+from repositories.base import BaseCRUDRepository
 from schemas.device import DeviceSchema
+from schemas.device_data import DeviceDataCreateSchema
+from schemas.device_data_dim_info import DeviceDataDimInfoSchema
 
 
-class DeviceRepository:
+class DeviceDataCalculatedDimRepository(
+    BaseCRUDRepository[DeviceDataCalculatedDimModel, DeviceDataDimInfoSchema]
+):
     def __init__(self, db: Session):
-        self.db = db
+        super().__init__(db=db, model=DeviceDataCalculatedDimModel)
 
-    def create(self, data: DeviceSchema) -> DeviceSchema:
-        db_item = DeviceModel(**data.model_dump())
-        self.db.add(db_item)
-        self.db.commit()
-        self.db.refresh(db_item)
-        return DeviceSchema.model_validate(db_item)
 
-    def get_by_id(self, item_id: int) -> DeviceSchema | None:
-        db_item = self.db.query(DeviceModel).filter(DeviceModel.id == item_id).first()
-        return DeviceSchema.model_validate(db_item) if db_item else None
+class DeviceDataCorrectedDimRepository(
+    BaseCRUDRepository[DeviceDataCorrectedDimModel, DeviceDataDimInfoSchema]
+):
+    def __init__(self, db: Session):
+        super().__init__(db=db, model=DeviceDataCorrectedDimModel)
 
-    def get_all(self) -> list[DeviceSchema]:
-        items = self.db.query(DeviceModel).all()
-        return [DeviceSchema.model_validate(item) for item in items]
+
+class DeviceDataRepository(BaseCRUDRepository[DeviceDataModel, DeviceDataCreateSchema]):
+    def __init__(self, db: Session):
+        super().__init__(db=db, model=DeviceDataModel)
+
+
+class DeviceRepository(BaseCRUDRepository[DeviceModel, DeviceSchema]):
+    def __init__(self, db: Session):
+        super().__init__(db=db, model=DeviceModel)

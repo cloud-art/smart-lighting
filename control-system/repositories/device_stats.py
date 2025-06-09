@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 from sqlalchemy import extract, func, select
 from sqlalchemy.orm import Session
@@ -16,7 +16,7 @@ class DeviceStatsRepository:
 
     def _execute_stats_query(
         self, time_unit: str, start_date: datetime, end_date: datetime
-    ) -> List[Any]:
+    ) -> list[Any]:
         time_extract = extract(time_unit, DeviceDataModel.timestamp).label(time_unit)
 
         return self.db.execute(
@@ -50,18 +50,18 @@ class DeviceStatsRepository:
 
     def get_hourly_stats(
         self, start_date: datetime, end_date: datetime
-    ) -> List[HourlyStats]:
+    ) -> list[HourlyStats]:
         data = self._execute_stats_query("hour", start_date, end_date)
         return HourlyStats.model_validate(data)
 
     def get_weekday_stats(
         self, start_date: datetime, end_date: datetime
-    ) -> List[WeekdayStats]:
+    ) -> list[WeekdayStats]:
         data = self._execute_stats_query("dow", start_date, end_date)
         return WeekdayStats.model_validate(data)
 
     def get_daily_stats(
         self, start_date: datetime, end_date: datetime
-    ) -> List[DailyStats]:
+    ) -> list[DailyStats]:
         data = self._execute_stats_query("day", start_date, end_date)
         return DailyStats.model_validate(data)

@@ -5,12 +5,12 @@ from fastapi import HTTPException, status
 from repositories.device_data import DeviceDataRepository
 from repositories.device_data_summary import DeviceDataSummaryRepository
 from schemas.base import PaginatedResponse
-from schemas.device_data import DeviceDataSchema, DeviceDataSummarySchema
+from schemas.device_data import DeviceDataSummarySchema
 from schemas.device_data_dim_info import DeviceDataDimInfoSchema
 from utils.pagination import Pagination
 
 
-class DeviceDataService:
+class DeviceDataSummaryService:
     def __init__(
         self,
         db_repo: DeviceDataRepository,
@@ -19,21 +19,7 @@ class DeviceDataService:
         self.db_repo = db_repo
         self.db_summary_repo = db_summary_repo
 
-    def get_device_data(
-        self, request: Any, page: int = 1, page_size: int = 10
-    ) -> PaginatedResponse[DeviceDataSchema]:
-        data = self.db_repo.get_all_paginated(page, page_size)
-        total_count = self.db_repo.get_total_count()
-
-        return Pagination.paginate(
-            request=request,
-            items=[DeviceDataSchema.model_validate(item) for item in data],
-            page=page,
-            page_size=page_size,
-            total_count=total_count,
-        )
-
-    def get_summary_data(
+    def get_device_summary_data(
         self, request: Any, page: int = 1, page_size: int = 10
     ) -> PaginatedResponse[DeviceDataSummarySchema]:
         data = self.db_summary_repo.get_summary_paginated_data(page, page_size)
@@ -47,7 +33,7 @@ class DeviceDataService:
             total_count=total_count,
         )
 
-    def update_corrected_dim(
+    def update_device_summary_dim(
         self, device_data_id: int, dimming_level: float
     ) -> Dict[str, Any]:
         self._validate_dimming_level(dimming_level)
@@ -67,7 +53,7 @@ class DeviceDataService:
             "corrected_dimming_level": corrected_dim.dimming_level,
         }
 
-    def bulk_update_corrected_dim(
+    def bulk_device_summary_update(
         self, updates: List[DeviceDataDimInfoSchema]
     ) -> Dict[str, Any]:
         results = {"success": [], "errors": []}

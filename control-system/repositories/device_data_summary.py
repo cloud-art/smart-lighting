@@ -3,10 +3,10 @@ from typing import List
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models.device_data import DeviceData, DeviceDataCorrectedDim, DeviceDataModel
+from models.device_data import DeviceDataModel
 from models.device_data_calculated_dim import DeviceDataCalculatedDimModel
 from models.device_data_corrected_dim import DeviceDataCorrectedDimModel
-from schemas.device_data import DeviceDataSchema, DeviceDataSummarySchema
+from schemas.device_data import DeviceDataSummarySchema
 from schemas.device_data_dim_info import DeviceDataDimInfoDBItem
 
 
