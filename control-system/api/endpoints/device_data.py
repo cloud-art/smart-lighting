@@ -3,9 +3,9 @@ from typing import Any, Dict, List
 from fastapi import APIRouter, Body, Depends, Query, Request
 from sqlalchemy.orm import Session
 
-from core.dependencies import get_db
+from core.dependencies.db import get_db
 from schemas.device_data import DimmingLevelUpdateResponse
-from services.device_data import DeviceDataService
+from services.device import DeviceDataService
 
 router = APIRouter()
 

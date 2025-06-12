@@ -1,22 +1,16 @@
 from typing import Any, Dict
 
-from fastapi import APIRouter, Depends, Query, Request
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
-from core.dependencies import get_db
+from core.dependencies.service import get_device_service
+from schemas.pagination import PaginationParams
 from services.device import DeviceService
 
 router = APIRouter()
 
-router.get("/device/", response_model=Dict[str, Any])
-
-
+router.get("/", response_model=Dict[str, Any])
 def get_device_data(
-    request: Request,
-    db: Session = Depends(get_db),
-    page: int = Query(1, description="Номер страницы", ge=1),
-    page_size: int = Query(
-        10, description="Количество записей на странице", ge=1, le=100
-    ),
+    pagination: PaginationParams = Depends(),
+    service: DeviceService = Depends(get_device_service)
 ):
-    return DeviceService.get_device_data(db, request, page, page_size)
+    return service.get_all_paginated(pagination.page, pagination.page_size)

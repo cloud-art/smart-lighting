@@ -6,10 +6,14 @@ from paho.mqtt.client import MQTTMessage
 from core.logger import logger
 from schemas.device_data import DeviceDataCreateSchema
 from schemas.mqtt_message import DeviceDataMessage
+from services.mqtt.types import IMQTTClient
 from tasks.mqtt import handle_mqtt_device_data_message
 
 
 class MessageHandler:
+    def __init__(self, mqtt_client: IMQTTClient):
+        self.mqtt_client = mqtt_client
+
     async def handle_message(self, msg: MQTTMessage) -> None:
         try:
             payload = self._parse_payload(msg)

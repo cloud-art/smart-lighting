@@ -1,12 +1,24 @@
-from fastapi import Depends, FastAPI
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import api
 from core.db import Base, engine
-from core.dependencies import get_mqtt_client
-from services.mqtt.client import MQTTClient
+from core.dependencies.mqtt import get_mqtt_client
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_tables()    
+    mqtt_client = get_mqtt_client()
+    try:
+        await mqtt_client.start()
+        yield
+    finally:
+        pass
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost",
@@ -25,18 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 def create_tables():
-    from core.initial_data import init_devices
-
     Base.metadata.create_all(bind=engine)
-    init_devices()
-
-
-@app.on_event("startup")
-async def startup(mqtt_client: MQTTClient = Depends(get_mqtt_client())):
-    create_tables()
-    await mqtt_client.start()
-
 
 app.include_router(api.router, prefix="/api")

@@ -1,17 +1,17 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from core.dependencies import get_db
-from models.device import Device
+from core.dependencies.db import get_db
+from models.device import DeviceModel
 
 
-def init_devices(db: Session = Depends(get_db())):
-    first_device = db.query(Device).filter(Device.serial_number == "1")
-    seconds_device = db.query(Device).filter(Device.serial_number == "2")
+def init_devices(db: Session = Depends(get_db)):
+    first_device = db.query(DeviceModel).filter(DeviceModel.serial_number == "1")
+    seconds_device = db.query(DeviceModel).filter(DeviceModel.serial_number == "2")
 
     if first_device.count == 0:
         db.add(
-            Device(
+            DeviceModel(
                 mqtt_topic="devices/1",
                 control_type="simple_rules",
                 serial_number="1",
@@ -24,7 +24,7 @@ def init_devices(db: Session = Depends(get_db())):
 
     if seconds_device.count == 0:
         db.add(
-            Device(
+            DeviceModel(
                 mqtt_topic="devices/2",
                 control_type="ai_model",
                 serial_number="2",

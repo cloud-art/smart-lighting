@@ -1,42 +1,39 @@
 from pydantic import PostgresDsn, RedisDsn
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(extra="ignore")
+
     # MQTT
-    MQTT_BROKER: str = "localhost"
-    MQTT_PORT: int = 1883
-    MQTT_USER: str = "default_user"
-    MQTT_PASS: str = "0000"
-    MQTT_KEEPALIVE: int = 60
-    MQTT_RECEIVE_TOPIC: str = "devices/+/data"
+    MQTT_BROKER: str
+    MQTT_PORT: int
+    MQTT_USER: str
+    MQTT_PASS: str
+    MQTT_KEEPALIVE: int
+    MQTT_RECIEVE_TOPIC: str
 
     @property
     def CELERY_BROKER_URL(self) -> RedisDsn:  # noqa: C0103
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     # DB
-    POSTGRES_HOST: str = "localhost"
-    POSTGRES_DB: str = "iot_db"
-    POSTGRES_USER: str = "user"
-    POSTGRES_PASSWORD: str = "0000"
-    POSTGRES_PORT: str = "5432"
+    DATABASE_HOST: str
+    DATABASE_NAME: str
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str
+    DATABASE_PORT: str
 
     @property
     def DATABASE_URL(self) -> PostgresDsn:  # noqa: C0103
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return f"postgresql://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
 
     # Redis/Celery
-    REDIS_HOST: str = "localhost"
-    REDIS_PORT: str = "6379"
+    REDIS_HOST: str
+    REDIS_PORT: str
 
     # ML
-    MODEL_PATH: str = "model.joblib"
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    MODEL_PATH: str
 
 
 settings = Settings()

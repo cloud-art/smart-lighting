@@ -4,10 +4,12 @@ from models.device import DeviceModel
 from models.device_data import DeviceDataModel
 from models.device_data_calculated_dim import DeviceDataCalculatedDimModel
 from models.device_data_corrected_dim import DeviceDataCorrectedDimModel
-from repositories.device import DeviceRepository
-from repositories.device_data import DeviceDataRepository
-from repositories.device_data_calculated_dim import DeviceDataCalculatedDimRepository
-from repositories.device_data_corrected_dim import DeviceDataCorrectedDimRepository
+from repositories.device import (
+    DeviceDataCalculatedDimRepository,
+    DeviceDataCorrectedDimRepository,
+    DeviceDataRepository,
+    DeviceRepository,
+)
 from schemas.device import DeviceBaseSchema, DeviceSchema
 from schemas.device_data import DeviceDataCreateSchema, DeviceDataSchema
 from schemas.device_data_dim_info import (

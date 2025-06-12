@@ -2,7 +2,7 @@ from typing import Optional, Sequence
 
 from pydantic import BaseModel
 
-from repositories.crud_repository import Base, BaseCRUDRepository, HasIdProtocol
+from repositories.base import Base, BaseCRUDRepository, HasIdProtocol
 
 
 class BaseCRUDServiceSchema(BaseModel):
@@ -15,7 +15,7 @@ class BaseCRUDService[
     InstanceSchemaType: BaseCRUDServiceSchema,
     CreateSchemaType: BaseModel,
 ]:
-    def __init__(self, repository: BaseCRUDRepository[ModelType, CreateSchemaType]):
+    def __init__(self, repository: BaseCRUDRepository[ModelType, CreateSchemaType, InstanceSchemaType]):
         self.repository = repository
 
     def create(self, data: CreateSchemaType) -> InstanceSchemaType:

@@ -8,13 +8,14 @@ from core.logger import logger
 from core.mqtt import Command
 from schemas.mqtt import MQTTPayload
 from services.mqtt.handlers import MessageHandler
+from services.mqtt.types import IMessageHandler
 
 
 class MQTTClient:
-    def __init__(self, message_handler: MessageHandler):
+    def __init__(self):
         self.client = Client()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._handler = message_handler
+        self._handler = MessageHandler(self)
         self._configure_client()
 
     def _configure_client(self) -> None:
@@ -39,14 +40,18 @@ class MQTTClient:
     def _on_connect(self, client: Client, userdata, flags, rc: int) -> None:
         if rc == 0:
             logger.info("Connected to MQTT Broker!")
-            client.subscribe(settings.MQTT_RECEIVE_TOPIC)
+            client.subscribe(settings.MQTT_RECIEVE_TOPIC)
         else:
             logger.error(f"Connection failed with code {rc}")
 
     def _on_message(self, client: Client, userdata, msg: MQTTMessage) -> None:
         try:
             logger.debug(f"Message received on {msg.topic}")
-            self._loop.create_task(self._handler.handle_message(msg))
+            def sendMessageBack(dim_level: int, device_data):
+                payload = self.create_payload(Command.SET_DIMMING, dim_level)
+                topic = self.get_device_publish_topic(device_data)
+                self.publish(topic, payload)
+            self._loop.create_task(self._handler.handle_message(msg, sendMessageBack))
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 

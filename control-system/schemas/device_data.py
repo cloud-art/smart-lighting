@@ -26,7 +26,7 @@ class DeviceDataCreateSchema(DeviceDataBaseSchema):
 
 class DeviceDataSchema(DeviceDataBaseSchema):
     id: int
-    device = DeviceSchema
+    device: DeviceSchema
 
     class Config:
         from_attributes = True

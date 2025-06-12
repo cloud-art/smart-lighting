@@ -1,7 +1,7 @@
 import logging
 from enum import Enum
 
-from models import DeviceDataDict
+from schemas.device_data import DeviceDataSchema
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,12 +53,12 @@ def compare_dimming_with_multiplier(multiplier: float) -> DimmingLevel:
     return closest_level
 
 
-def calculate_dim_level(device: DeviceDataDict) -> int:
+def calculate_dim_level(device_data: DeviceDataSchema) -> int:
     dimming_multiplier = 0
-    ambient_light = device["ambient_light"]
-    traffic_density = device["traffic_density"]
-    pedestrian_density = device["pedestrian_density"]
-    weather = device["pedestrian_density"]
+    ambient_light = device_data.ambient_light
+    traffic_density = device_data.traffic_density
+    pedestrian_density = device_data.pedestrian_density
+    weather = device_data.weather
 
     movement_intensity_multiplier = max(traffic_density, pedestrian_density)
 

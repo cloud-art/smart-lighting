@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from core.dependencies import get_ai_model
+from core.dependencies.service import get_ai_model
 from schemas.device_data import DeviceDataSchema
 from services.ai_model import AiModel
 from utils.dim_calculating import calculate_dim_level

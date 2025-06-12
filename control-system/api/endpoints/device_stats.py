@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from core.dependencies import get_db
+from core.dependencies.db import get_db
 from schemas.device_stats import DailyStats, HourlyStats, WeekdayStats
 from services.device_stats import DeviceStatsService
 

@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from fastapi import HTTPException, status
 
-from repositories.device_data import DeviceDataRepository
+from repositories.device import DeviceDataRepository
 from repositories.device_data_summary import DeviceDataSummaryRepository
 from schemas.base import PaginatedResponse
 from schemas.device_data import DeviceDataSummarySchema

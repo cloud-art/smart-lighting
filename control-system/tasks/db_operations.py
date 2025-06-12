@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 
-from core.dependencies import get_db
+from core.dependencies.db import get_db
 from core.logger import logger
-from models.device_data import DeviceData, DeviceDataCalculatedDim, DeviceDataModel
+from models.device_data import DeviceDataModel
 from schemas.device_data import DeviceDataCreateSchema, DeviceDataSchema
+from schemas.device_data_dim_info import DeviceDataDimInfoDBItem
 
 
 class DeviceDataDBService:
@@ -25,10 +26,10 @@ class DeviceDataDBService:
             db.close()
 
     @staticmethod
-    def save_calculated_dim(data: dict) -> DeviceDataCalculatedDim:
+    def save_calculated_dim(data: dict) -> DeviceDataDimInfoDBItem:
         db: Session = next(get_db())
         try:
-            dim_data = DeviceDataCalculatedDim(**data)
+            dim_data = DeviceDataDimInfoDBItem(**data)
             db.add(dim_data)
             db.commit()
             db.refresh(dim_data)
