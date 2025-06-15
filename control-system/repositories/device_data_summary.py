@@ -48,10 +48,10 @@ class DeviceDataSummaryRepository:
 
     def get_total_count(self, device_id: Optional[int] = None):
         query = select(func.count()).select_from(DeviceDataModel)
-        if device_id:
+        if device_id is not None:
             query = query.where(DeviceDataModel.device_id == device_id)
-
-        return self.db.scalar(select(func.count()).select_from(DeviceDataModel))
+        
+        return self.db.scalar(query)
 
     def create(self, data: Any):
         return super().create(data)

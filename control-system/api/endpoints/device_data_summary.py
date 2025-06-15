@@ -47,5 +47,4 @@ async def bulk_update(
     body: DeviceDataSummaryBulkUpdateSchema = Body(),
     service: DeviceDataSummaryService = Depends(get_device_data_summary_service),
 ):
-    update_data = DeviceDataSummaryUpdateSchema(**body.model_dump(exclude={"ids"}))
-    return service.bulk_update(body.ids, update_data)
+    return service.bulk_update(body)
