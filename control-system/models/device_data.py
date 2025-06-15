@@ -22,5 +22,7 @@ class DeviceDataModel(Base):
     lamp_power = Column(Float)
     weather = Column(String)
 
-    data = relationship("DeviceDataCalculatedDim", back_populates="device_data_id")
-    data = relationship("DeviceDataCorrectedDim", back_populates="device_data_id")
+
+    device = relationship("DeviceModel", back_populates="data")
+    calculated_dimming_level = relationship("DeviceDataCalculatedDimModel", back_populates="data", uselist=False)
+    corrected_dimming_level = relationship("DeviceDataCorrectedDimModel", back_populates="data", uselist=False)

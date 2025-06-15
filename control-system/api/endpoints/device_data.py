@@ -1,84 +1,36 @@
-from typing import Any, Dict, List
+from fastapi import APIRouter, Depends, Request
 
-from fastapi import APIRouter, Body, Depends, Query, Request
-from sqlalchemy.orm import Session
-
-from core.dependencies.db import get_db
-from schemas.device_data import DimmingLevelUpdateResponse
-from services.device import DeviceDataService
-
-router = APIRouter()
-
-router.get("/device_data/", response_model=Dict[str, Any])
-
-
-def get_device_data(
-    request: Request,
-    db: Session = Depends(get_db),
-    page: int = Query(1, description="Номер страницы", ge=1),
-    page_size: int = Query(
-        10, description="Количество записей на странице", ge=1, le=100
-    ),
-):
-    return DeviceDataService.get_device_data(db, request, page, page_size)
-
-
-@router.get("/api/device_data_calculated_dim/", response_model=Dict[str, Any])
-def get_device_data_calculated_dim(
-    request: Request,
-    db: Session = Depends(get_db),
-    page: int = Query(1, description="Номер страницы", ge=1),
-    page_size: int = Query(
-        10, description="Количество записей на странице", ge=1, le=100
-    ),
-):
-    return DeviceDataService.get_device_data_calculated_dim(
-        db, request, page, page_size
-    )
-
-
-@router.get("/api/device_data_corrected_dim/", response_model=Dict[str, Any])
-def get_device_data_calculated_dim(
-    request: Request,
-    db: Session = Depends(get_db),
-    page: int = Query(1, description="Номер страницы", ge=1),
-    page_size: int = Query(
-        10, description="Количество записей на странице", ge=1, le=100
-    ),
-):
-    return DeviceDataService.get_device_data_corrected_dim(db, request, page, page_size)
-
-
-@router.get("/device_data_summary/", response_model=Dict[str, Any])
-def get_device_data_summary(
-    request: Request,
-    db: Session = Depends(get_db),
-    page: int = Query(1, description="Номер страницы", ge=1),
-    page_size: int = Query(
-        10, description="Количество записей на странице", ge=1, le=100
-    ),
-):
-    return DeviceDataService.get_device_data_summary(db, request, page, page_size)
-
-
-@router.patch(
-    "/device_data_summary/{device_data_id}", response_model=DimmingLevelUpdateResponse
+from core.dependencies.service import (
+    get_device_data_service,
 )
-async def update_corrected_dimming_level(
-    device_data_id: int, request: Request, db: Session = Depends(get_db)
+from schemas.base import PaginatedResponse
+from schemas.device_data import (
+    DeviceDataCreateSchema,
+    DeviceDataQueryParams,
+    DeviceDataSchema,
+)
+from schemas.pagination import PaginationParams
+from services.device_data import DeviceDataService
+
+router = APIRouter(prefix='/device-data', tags=['DevicesData'])  # noqa: F821
+
+@router.get("/", response_model=PaginatedResponse[DeviceDataSchema])
+async def get_all(
+    request: Request,
+    params: DeviceDataQueryParams = Depends(),
+    pagination: PaginationParams = Depends(),
+    service: DeviceDataService = Depends(get_device_data_service)
 ):
-    body = await request.json()
-    corrected_dimming_level = body.get("corrected_dimming_level")
+    return service.get_all(request=request, page=pagination.page, page_size=pagination.page_size, params=params.to_schema())
 
-    return DeviceDataService.update_corrected_dimming_level(
-        db=db,
-        device_data_id=device_data_id,
-        corrected_dimming_level=corrected_dimming_level,
-    )
+@router.get("/{item_id}", response_model=DeviceDataSchema)
+async def get_by_id(item_id: int, params: DeviceDataQueryParams = Depends(), service:  DeviceDataService = Depends(get_device_data_service)):
+    return service.get_by_id(item_id, params=params.to_schema()) 
 
+@router.post("/", response_model=DeviceDataSchema)
+async def create(item: DeviceDataCreateSchema, service: DeviceDataService = Depends(get_device_data_service)):
+    return service.create(item)
 
-@router.post("/device_data_summary/bulk_update/")
-async def bulk_update_corrected_dimming_level(
-    updates: List[Dict[str, Any]] = Body(), db: Session = Depends(get_db)
-):
-    return DeviceDataService.bulk_update_corrected_dimming(db, updates)
+@router.put("/{item_id}", response_model=DeviceDataSchema)
+async def update(item_id: int, item: DeviceDataSchema, service: DeviceDataService = Depends(get_device_data_service)):
+    return service.update(item_id, item)

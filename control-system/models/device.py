@@ -15,4 +15,4 @@ class DeviceModel(Base):
     latitude = Column(Float)
     longitude = Column(Float)
 
-    data = relationship("DeviceData", back_populates="device")
+    data = relationship("DeviceDataModel", back_populates="device")
