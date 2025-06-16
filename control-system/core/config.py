@@ -13,10 +13,6 @@ class Settings(BaseSettings):
     MQTT_KEEPALIVE: int
     MQTT_RECIEVE_TOPIC: str
 
-    @property
-    def CELERY_BROKER_URL(self) -> RedisDsn:  # noqa: C0103
-        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
-
     # DB
     DATABASE_HOST: str
     DATABASE_NAME: str
@@ -31,6 +27,10 @@ class Settings(BaseSettings):
     # Redis/Celery
     REDIS_HOST: str
     REDIS_PORT: str
+
+    @property
+    def CELERY_BROKER_URL(self) -> RedisDsn:  # noqa: C0103
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     # ML
     MODEL_PATH: str
