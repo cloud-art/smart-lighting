@@ -12,5 +12,6 @@ class IMQTTClient(Protocol):
     @staticmethod
     def get_device_publish_topic(device: Any) -> str: ...
 
+
 class IMessageHandler(Protocol):
     async def handle_message(self, msg: MQTTMessage) -> None: ...

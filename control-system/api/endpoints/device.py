@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 
 from core.dependencies.service import (
-    get_device_data_service,
-    get_device_data_summary_service,
     get_device_service,
 )
 from schemas.base import PaginatedResponse
@@ -19,7 +17,9 @@ async def get_all(
     pagination: PaginationParams = Depends(),
     service: DeviceService = Depends(get_device_service),
 ):
-    return service.get_all(request=request, page=pagination.page, page_size=pagination.page_size)
+    return service.get_all(
+        request=request, page=pagination.page, page_size=pagination.page_size
+    )
 
 
 @router.get("/{item_id}", response_model=DeviceSchema)

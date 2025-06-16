@@ -11,5 +11,3 @@ class DeviceService(BaseCRUDService[DeviceSchema]):
     def __init__(self, db: Session):
         repository = DeviceRepository(db)
         super().__init__(repository, DeviceSchema)
-
-

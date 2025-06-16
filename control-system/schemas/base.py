@@ -12,5 +12,6 @@ class PaginatedResponse(GenericModel, Generic[T]):
     count: int
     results: list[T]
 
+
 class BulkUpdateSchema(BaseModel):
     ids: list[int]

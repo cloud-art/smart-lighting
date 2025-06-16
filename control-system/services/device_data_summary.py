@@ -13,7 +13,7 @@ from schemas.device_data import (
 from utils.pagination import Pagination
 
 
-class DeviceDataSummaryService():
+class DeviceDataSummaryService:
     def __init__(self, db: Session):
         self.repository = DeviceDataSummaryRepository(db)
 

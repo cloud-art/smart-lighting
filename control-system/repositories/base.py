@@ -34,20 +34,31 @@ class Repository(ABC):
         self.db = db
 
     @abstractmethod
-    def get_one(self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None) -> Any:
+    def get_one(
+        self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None
+    ) -> Any:
         raise NotImplementedError("Get by id operation is not allowed")
 
     @abstractmethod
-    def get_all(self, *, filters: Optional[Dict[str, Any]] = None,
+    def get_all(
+        self,
+        *,
+        filters: Optional[Dict[str, Any]] = None,
         joins: Optional[List[Tuple[str, Any]]] = None,
         order_by: Optional[Union[str, List[str]]] = None,
         offset: Optional[int] = None,
-        limit: Optional[int] = None,) -> list[Any]:
+        limit: Optional[int] = None,
+    ) -> list[Any]:
         raise NotImplementedError("Get all operation is not allowed")
 
     @abstractmethod
-    def get_total_count(self, filters: Optional[Dict[str, Any]] = None, joins: Optional[List[Tuple[str, Any]]] = None) -> int:
+    def get_total_count(
+        self,
+        filters: Optional[Dict[str, Any]] = None,
+        joins: Optional[List[Tuple[str, Any]]] = None,
+    ) -> int:
         raise NotImplementedError("Get total count operation is not allowed")
+
 
 class CRUDRepository(Repository):
     def __init__(self, db: Session):
@@ -65,11 +76,14 @@ class CRUDRepository(Repository):
     def bulk_update(self, ids: Sequence[int], data: Any) -> int:
         raise NotImplementedError("Bulk update operation is not allowed")
 
-class QueryBuilder():
-    def __init__(self, model: Base):
-        self.model = model  
 
-    def build_filter_conditions(self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None) -> Any:
+class QueryBuilder:
+    def __init__(self, model: Base):
+        self.model = model
+
+    def build_filter_conditions(
+        self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None
+    ) -> Any:
         conditions = []
         join_aliases = {}
 
@@ -79,19 +93,30 @@ class QueryBuilder():
 
         for key, value in filters.items():
             parts = key.split("__")
-            
+
             current_model = self.model
             field_path = []
             operators = []
-            
+
             for part in parts:
-                if part in ['eq', 'ne', 'gt', 'lt', 'gte', 'lte', 'in', 'like', 'ilike', 'is_null']:
+                if part in [
+                    "eq",
+                    "ne",
+                    "gt",
+                    "lt",
+                    "gte",
+                    "lte",
+                    "in",
+                    "like",
+                    "ilike",
+                    "is_null",
+                ]:
                     operators.append(part)
                 else:
                     field_path.append(part)
-            
-            operator = operators[-1] if operators else 'eq'
-            
+
+            operator = operators[-1] if operators else "eq"
+
             field = None
             for i, field_name in enumerate(field_path):
                 if i < len(field_path) - 1:
@@ -103,10 +128,14 @@ class QueryBuilder():
                     field = getattr(current_model, field_name, None)
                     if field is None:
                         raise ValueError(f"Field '{field_name}' not found in model")
-            
+
             if isinstance(value, (int, float)):
-                value = float(value) if isinstance(field.type, sqlalchemy.Float) else int(value)
-            
+                value = (
+                    float(value)
+                    if isinstance(field.type, sqlalchemy.Float)
+                    else int(value)
+                )
+
             if operator == "eq":
                 conditions.append(field == value)
             elif operator == "ne":
@@ -132,30 +161,30 @@ class QueryBuilder():
                     conditions.append(field.is_not(None))
             else:
                 raise ValueError(f"Unknown operator '{operator}'")
-                
+
         return and_(*conditions) if conditions else True
-    
+
     def apply_ordering(self, query: Select, order_by: Union[str, List[str]]) -> Any:
         if isinstance(order_by, str):
             order_by = [order_by]
-            
+
         order_clauses = []
-        
+
         for field in order_by:
             direction = "asc"
             if field.startswith("-"):
                 direction = "desc"
                 field = field[1:]
-                
+
             model_field = getattr(self.model, field, None)
             if model_field is None:
                 raise ValueError(f"Field '{field}' not found in model")
-                
+
             if direction == "asc":
                 order_clauses.append(model_field.asc())
             else:
                 order_clauses.append(model_field.desc())
-                
+
         return query.order_by(*order_clauses)
 
 
@@ -193,7 +222,7 @@ class BaseCRUDRepository[
         )
         self.db.commit()
         return result.rowcount
-    
+
     def get_all(
         self,
         *,
@@ -210,38 +239,50 @@ class BaseCRUDRepository[
                 query = query.join(getattr(self.model, relation_name))
 
         if filters:
-            query = query.where(self.query_builder.build_filter_conditions(filters, joins=joins))
-            
+            query = query.where(
+                self.query_builder.build_filter_conditions(filters, joins=joins)
+            )
+
         if order_by:
             query = self.query_builder.apply_ordering(query, order_by)
-            
+
         if offset is not None:
             query = query.offset(offset)
-            
+
         if limit is not None:
             query = query.limit(limit)
-            
+
         result = self.db.execute(query)
         return result.scalars().all()
-    
-    def get_one(self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None) -> Optional[ModelType]:
+
+    def get_one(
+        self, filters: Dict[str, Any], joins: Optional[List[Tuple[str, Any]]] = None
+    ) -> Optional[ModelType]:
         query = select(self.model)
         if joins:
             for relation_name, _ in joins:
                 query = query.join(getattr(self.model, relation_name))
-        
-        query = query.where(self.query_builder.build_filter_conditions(filters=filters, joins=joins)).limit(1)
+
+        query = query.where(
+            self.query_builder.build_filter_conditions(filters=filters, joins=joins)
+        ).limit(1)
         result = self.db.execute(query)
         return result.scalars().first()
-     
-    def get_total_count(self, filters: Optional[Dict[str, Any]] = None, joins: Optional[List[Tuple[str, Any]]] = None) -> int:
+
+    def get_total_count(
+        self,
+        filters: Optional[Dict[str, Any]] = None,
+        joins: Optional[List[Tuple[str, Any]]] = None,
+    ) -> int:
         query = select(func.count()).select_from(self.model)
 
         if joins:
             for relation_name, _ in joins:
                 query = query.join(getattr(self.model, relation_name))
-        
+
         if filters:
-            query = query.where(self.query_builder.build_filter_conditions(filters, joins=joins))
-            
+            query = query.where(
+                self.query_builder.build_filter_conditions(filters, joins=joins)
+            )
+
         return self.db.scalar(query)

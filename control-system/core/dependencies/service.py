@@ -20,14 +20,22 @@ def get_ai_model() -> AiModel:
 def get_device_data_service(db: Session = Depends(get_db)) -> DeviceDataService:
     return DeviceDataService(db)
 
+
 def get_device_data_summary_service(db: Session = Depends(get_db)) -> DeviceDataService:
     return DeviceDataSummaryService(db)
 
-def get_device_data_calculated_dim_service(db: Session = Depends(get_db)) -> DeviceDataCalculatedDimService:
+
+def get_device_data_calculated_dim_service(
+    db: Session = Depends(get_db),
+) -> DeviceDataCalculatedDimService:
     return DeviceDataCalculatedDimService(db)
 
-def get_device_data_corrected_dim_service(db: Session = Depends(get_db)) -> DeviceDataCorrectedDimService:
+
+def get_device_data_corrected_dim_service(
+    db: Session = Depends(get_db),
+) -> DeviceDataCorrectedDimService:
     return DeviceDataCorrectedDimService(db)
+
 
 def get_device_service(db: Session = Depends(get_db)) -> DeviceService:
     return DeviceService(db)

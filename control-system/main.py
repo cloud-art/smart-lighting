@@ -10,13 +10,14 @@ from core.dependencies.mqtt import get_mqtt_client
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()    
+    create_tables()
     mqtt_client = get_mqtt_client()
     try:
         await mqtt_client.start()
         yield
     finally:
         pass
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -37,7 +38,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 def create_tables():
     Base.metadata.create_all(bind=engine)
+
 
 app.include_router(api.router, prefix="/api")

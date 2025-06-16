@@ -14,20 +14,26 @@ from schemas.device_data_dim_info import (
 
 
 class DeviceDataCalculatedDimRepository(
-    BaseCRUDRepository[DeviceDataCalculatedDimModel, DeviceDataDimInfoSchema, DeviceDataDimInfoDBItem]
+    BaseCRUDRepository[
+        DeviceDataCalculatedDimModel, DeviceDataDimInfoSchema, DeviceDataDimInfoDBItem
+    ]
 ):
     def __init__(self, db: Session):
         super().__init__(db=db, model=DeviceDataCalculatedDimModel)
 
 
 class DeviceDataCorrectedDimRepository(
-    BaseCRUDRepository[DeviceDataCorrectedDimModel, DeviceDataDimInfoSchema, DeviceDataDimInfoDBItem]
+    BaseCRUDRepository[
+        DeviceDataCorrectedDimModel, DeviceDataDimInfoSchema, DeviceDataDimInfoDBItem
+    ]
 ):
     def __init__(self, db: Session):
         super().__init__(db=db, model=DeviceDataCorrectedDimModel)
 
 
-class DeviceDataRepository(BaseCRUDRepository[DeviceDataModel, DeviceDataCreateSchema, DeviceDataSchema]):
+class DeviceDataRepository(
+    BaseCRUDRepository[DeviceDataModel, DeviceDataCreateSchema, DeviceDataSchema]
+):
     def __init__(self, db: Session):
         super().__init__(db=db, model=DeviceDataModel)
 

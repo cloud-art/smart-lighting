@@ -8,7 +8,6 @@ from core.logger import logger
 from core.mqtt import Command
 from schemas.mqtt import MQTTPayload
 from services.mqtt.handlers import MessageHandler
-from services.mqtt.types import IMessageHandler
 
 
 class MQTTClient:
@@ -47,10 +46,12 @@ class MQTTClient:
     def _on_message(self, client: Client, userdata, msg: MQTTMessage) -> None:
         try:
             logger.debug(f"Message received on {msg.topic}")
+
             def sendMessageBack(dim_level: int, device_data):
                 payload = self.create_payload(Command.SET_DIMMING, dim_level)
                 topic = self.get_device_publish_topic(device_data)
                 self.publish(topic, payload)
+
             self._loop.create_task(self._handler.handle_message(msg, sendMessageBack))
         except Exception as e:
             logger.error(f"Error processing message: {e}")
@@ -70,4 +71,4 @@ class MQTTClient:
 
     @staticmethod
     def get_device_publish_topic(device):
-        return f"/control"
+        return "/control"

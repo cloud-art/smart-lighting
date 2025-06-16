@@ -12,10 +12,12 @@ from schemas.device_data import (
 from services.base import BaseCRUDService
 
 
-class DeviceDataService():
+class DeviceDataService:
     def __init__(self, db: Session):
         repository = DeviceDataRepository(db)
-        self.crud_service = BaseCRUDService[DeviceDataSchema](repository, DeviceDataSchema)
+        self.crud_service = BaseCRUDService[DeviceDataSchema](
+            repository, DeviceDataSchema
+        )
 
     def create(self, data: DeviceDataBaseSchema):
         return self.crud_service.create(data)
@@ -28,9 +30,7 @@ class DeviceDataService():
         if params.device:
             filters = {**filters, "device": params.device}
 
-        return self.crud_service.get_by_id(
-            item_id=item_id, filters=filters
-        )
+        return self.crud_service.get_by_id(item_id=item_id, filters=filters)
 
     def get_all(
         self,
@@ -49,4 +49,3 @@ class DeviceDataService():
             page=page,
             page_size=page_size,
         )
-

@@ -50,7 +50,7 @@ class DeviceDataSummaryRepository:
         query = select(func.count()).select_from(DeviceDataModel)
         if device_id is not None:
             query = query.where(DeviceDataModel.device_id == device_id)
-        
+
         return self.db.scalar(query)
 
     def create(self, data: Any):
@@ -60,7 +60,7 @@ class DeviceDataSummaryRepository:
         summary_item = self.get_by_id(id)
         if not summary_item:
             return None
-        
+
         corrected_dim = summary_item.corrected_dimming_level
 
         if corrected_dim:

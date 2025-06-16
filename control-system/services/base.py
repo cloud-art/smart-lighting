@@ -14,10 +14,10 @@ class BaseCRUDServiceSchema(BaseModel):
         from_attributes = True
 
 
-class BaseCRUDService[
-        InstanceSchemaType: BaseCRUDServiceSchema
-    ]:
-    def __init__(self, repository: BaseCRUDRepository, instance_schema: InstanceSchemaType):
+class BaseCRUDService[InstanceSchemaType: BaseCRUDServiceSchema]:
+    def __init__(
+        self, repository: BaseCRUDRepository, instance_schema: InstanceSchemaType
+    ):
         self.repository = repository
         self.instance_schema = instance_schema
 
@@ -54,7 +54,7 @@ class BaseCRUDService[
         request: Request,
         page: int,
         page_size: int,
-        filters: Optional[Dict[str, Any]] = None, 
+        filters: Optional[Dict[str, Any]] = None,
         joins: Optional[List[Tuple[str, Any]]] = None,
         order_by: Optional[Dict[str, Any]] = None,
     ) -> PaginatedResponse[InstanceSchemaType]:
@@ -62,7 +62,11 @@ class BaseCRUDService[
         logger.logger.info(joins)
         total_count = self.get_total_count(filters=filters, joins=joins)
         data = self.repository.get_all(
-            filters=filters, joins=joins, order_by=order_by, offset=offset, limit=page_size
+            filters=filters,
+            joins=joins,
+            order_by=order_by,
+            offset=offset,
+            limit=page_size,
         )
         return Pagination[InstanceSchemaType].paginate(
             request=request,
@@ -72,6 +76,10 @@ class BaseCRUDService[
             total_count=total_count,
         )
 
-    def get_total_count(self, filters: Dict[str, Any] | None = None, joins: Optional[List[Tuple[str, Any]]] = None) -> int:
+    def get_total_count(
+        self,
+        filters: Dict[str, Any] | None = None,
+        joins: Optional[List[Tuple[str, Any]]] = None,
+    ) -> int:
         logger.logger.info(joins)
         return self.repository.get_total_count(filters=filters, joins=joins)

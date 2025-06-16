@@ -14,13 +14,14 @@ class DeviceDataBaseSchema(BaseModel):
     timestamp: datetime
     car_count: int
     traffic_speed: float
-    traffic_density: float 
+    traffic_density: float
     pedestrian_count: Optional[int]
     pedestrian_density: Optional[float]
     ambient_light: Optional[float]
     dimming_level: Optional[float]
     lamp_power: Optional[float]
     weather: Optional[Weather]
+
 
 class DeviceDataCreateSchema(DeviceDataBaseSchema):
     device_id: int
@@ -37,13 +38,14 @@ class DeviceDataSchema(DeviceDataBaseSchema):
 class DeviceDataQueryParamsSchema(BaseModel):
     device: Optional[int]
 
+
 class DeviceDataQueryParams:
     def __init__(
         self,
         device: int = Query(None, description="Идентификатор устройства"),
     ):
         self.device = device
-    
+
     def to_schema(self) -> DeviceDataQueryParamsSchema:
         return DeviceDataQueryParamsSchema(device=self.device)
 
@@ -55,8 +57,10 @@ class DeviceDataSummarySchema(DeviceDataSchema):
     class Config:
         from_attributes = True
 
+
 class DeviceDataSummaryUpdateSchema(BaseModel):
     corrected_dimming_level: float | None
+
 
 class DeviceDataSummaryBulkUpdateSchema(BulkUpdateSchema):
     corrected_dimming_level: float | None
@@ -64,6 +68,7 @@ class DeviceDataSummaryBulkUpdateSchema(BulkUpdateSchema):
 
 class DeviceDataSummaryQueryParamsSchema(BaseModel):
     device: Optional[int]
+
 
 class DeviceDataSummaryQueryParams:
     def __init__(

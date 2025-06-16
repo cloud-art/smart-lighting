@@ -2,7 +2,6 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from core.types import LightingClass, Weather
 from schemas.device_data import DeviceDataCreateSchema, DeviceDataSchema
 
 

@@ -30,7 +30,7 @@ async def get_all(
         request=request,
         page=pagination.page,
         page_size=pagination.page_size,
-        params=params.to_schema()
+        params=params.to_schema(),
     )
 
 
@@ -46,9 +46,7 @@ async def get_by_id(
     #     filters = {"device": device}
     #     joins = [("data", DeviceDataModel)]
 
-    return service.get_by_id(
-        item_id, params=params.to_schema()
-    )
+    return service.get_by_id(item_id, params=params.to_schema())
 
 
 @router.post("/", response_model=DeviceDataDimInfoDBItem)

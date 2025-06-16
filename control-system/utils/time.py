@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Dict
 
-import pandas as pd
-
 
 def get_time_features(dt: datetime) -> Dict[str, int]:
     day_of_week = dt.weekday()

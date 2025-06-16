@@ -8,7 +8,9 @@ from tasks.db_operations import DeviceDataDBService
 
 
 @app.task(bind=True, max_retries=3)
-def handle_mqtt_device_data_message(self, device_data_create: DeviceDataCreateSchema, mqtt_client: IMQTTClient):
+def handle_mqtt_device_data_message(
+    self, device_data_create: DeviceDataCreateSchema, mqtt_client: IMQTTClient
+):
     try:
         device_data = DeviceDataDBService.save_device_data(device_data_create)
 

@@ -23,7 +23,12 @@ async def get_all(
     pagination: PaginationParams = Depends(),
     service: DeviceDataSummaryService = Depends(get_device_data_summary_service),
 ):
-    return service.get_all(request=request, page=pagination.page, page_size=pagination.page_size, params=params.to_schema())
+    return service.get_all(
+        request=request,
+        page=pagination.page,
+        page_size=pagination.page_size,
+        params=params.to_schema(),
+    )
 
 
 @router.get("/{item_id}", response_model=DeviceDataSummarySchema)
@@ -41,6 +46,7 @@ async def update(
     service: DeviceDataSummaryService = Depends(get_device_data_summary_service),
 ):
     return service.update(item_id, body)
+
 
 @router.post("/bulk_update", response_model=int)
 async def bulk_update(

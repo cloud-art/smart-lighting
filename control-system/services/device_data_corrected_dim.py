@@ -17,7 +17,9 @@ from services.base import BaseCRUDService
 class DeviceDataCorrectedDimService(BaseCRUDService[DeviceDataDimInfoDBItem,]):
     def __init__(self, db: Session):
         repository = DeviceDataCorrectedDimRepository(db)
-        self.crud_service = BaseCRUDService[DeviceDataDimInfoDBItem](repository, DeviceDataDimInfoDBItem)
+        self.crud_service = BaseCRUDService[DeviceDataDimInfoDBItem](
+            repository, DeviceDataDimInfoDBItem
+        )
 
     def create(self, data: DeviceDataDimInfoSchema):
         return self.crud_service.create(data)
@@ -48,7 +50,7 @@ class DeviceDataCorrectedDimService(BaseCRUDService[DeviceDataDimInfoDBItem,]):
         if params.device:
             filters = {**filters, "data__device_id__eq": params.device}
             joins.append(("data", DeviceDataModel))
-        
+
         return self.crud_service.get_all(
             request=request,
             filters=filters,
@@ -56,4 +58,3 @@ class DeviceDataCorrectedDimService(BaseCRUDService[DeviceDataDimInfoDBItem,]):
             page=page,
             page_size=page_size,
         )
-

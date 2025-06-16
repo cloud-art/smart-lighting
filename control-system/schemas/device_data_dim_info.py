@@ -13,8 +13,10 @@ class DeviceDataDimInfoDBItem(DeviceDataDimInfoSchema):
     class Config:
         from_attributes = True
 
+
 class DeviceDataDimInfoQueryParamsSchema(BaseModel):
     device: Optional[int]
+
 
 class DeviceDataDimInfoQueryParams:
     def __init__(
@@ -25,4 +27,3 @@ class DeviceDataDimInfoQueryParams:
 
     def to_schema(self) -> DeviceDataDimInfoQueryParamsSchema:
         return DeviceDataDimInfoQueryParamsSchema(device=self.device)
-    
