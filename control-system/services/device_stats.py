@@ -8,7 +8,6 @@ from repositories.device_stats import DeviceStatsRepository
 from schemas.device_stats import (
     DeviceDailyAverageStats,
     DeviceHourlyAveragesStats,
-    DeviceStatsRowSchema,
     DeviceWeekdayAverageStats,
 )
 from utils.time import format_dow_number
@@ -31,8 +30,8 @@ class DeviceStatsService:
         return [
             DeviceHourlyAveragesStats.model_validate(
                 {
-                    "hour": row.hour,
-                    **DeviceStatsRowSchema.model_validate(row),
+                    "hour": row._asdict()[SQLExtractFields.Hour.value],
+                    **row._asdict(),
                 }
             )
             for row in result
@@ -51,9 +50,9 @@ class DeviceStatsService:
         return [
             DeviceWeekdayAverageStats.model_validate(
                 {
-                    "day": int(row[SQLExtractFields.Weekday.value]),
-                    "day_name": format_dow_number(row[SQLExtractFields.Weekday.value]),
-                    **DeviceStatsRowSchema.model_validate(row),
+                    "day": int(row._asdict()[SQLExtractFields.Weekday.value]),
+                    "day_name": format_dow_number(row._asdict()[SQLExtractFields.Weekday.value]),
+                    **row._asdict(),
                 }
             )
             for row in result
@@ -70,8 +69,8 @@ class DeviceStatsService:
         return [
             DeviceDailyAverageStats.model_validate(
                 {
-                    "day_of_month": row[SQLExtractFields.Day],
-                    **DeviceStatsRowSchema.model_validate(row),
+                    "day_of_month": row._asdict()[SQLExtractFields.Day.value],
+                    **row._asdict(),
                 }
             )
             for row in result

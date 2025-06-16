@@ -12,6 +12,10 @@ def get_time_features(dt: datetime) -> Dict[str, int]:
 
 
 def format_dow_number(dow_str: str | int):
-    return datetime.strptime(
-        str(dow_str) if type(dow_str) is int else dow_str, "%w"
-    ).strftime("%A")
+    weekdays = ['Monday', 'Tuesday', 'Wednesday', 
+                'Thursday', 'Friday', 'Saturday', 'Sunday']
+    try:
+        day_num = int(dow_str)
+        return weekdays[day_num]
+    except (ValueError, IndexError) as e:
+        raise ValueError(f"Invalid day of week value: {dow_str}. Must be 0-6.") from e
