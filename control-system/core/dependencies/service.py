@@ -11,6 +11,7 @@ from services.device_data import DeviceDataService
 from services.device_data_calculated_dim import DeviceDataCalculatedDimService
 from services.device_data_corrected_dim import DeviceDataCorrectedDimService
 from services.device_data_summary import DeviceDataSummaryService
+from services.device_stats import DeviceStatsService
 
 
 def get_ai_model() -> AiModel:
@@ -39,3 +40,7 @@ def get_device_data_corrected_dim_service(
 
 def get_device_service(db: Session = Depends(get_db)) -> DeviceService:
     return DeviceService(db)
+
+
+def get_device_stats_service(db: Session = Depends(get_db)) -> DeviceStatsService:
+    return DeviceStatsService(db)

@@ -9,3 +9,9 @@ def get_time_features(dt: datetime) -> Dict[str, int]:
         "day_of_week": day_of_week,
         "is_weekend": 1 if day_of_week in [5, 6] else 0,
     }
+
+
+def format_dow_number(dow_str: str | int):
+    return datetime.strptime(
+        str(dow_str) if type(dow_str) is int else dow_str, "%w"
+    ).strftime("%A")

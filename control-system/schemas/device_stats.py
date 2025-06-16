@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class StatsBase(BaseModel):
+class DeviceStatsRowSchema(BaseModel):
     avg_car_count: Optional[float]
     avg_traffic_speed: Optional[float]
     avg_pedestrian_count: Optional[float]
@@ -12,14 +12,14 @@ class StatsBase(BaseModel):
     avg_corrected_dim: Optional[float]
 
 
-class HourlyStats(StatsBase):
+class DeviceHourlyAveragesStats(DeviceStatsRowSchema):
     hour: int
 
 
-class WeekdayStats(StatsBase):
+class DeviceWeekdayAverageStats(DeviceStatsRowSchema):
     day: int
     day_name: str
 
 
-class DailyStats(StatsBase):
+class DeviceDailyAverageStats(DeviceStatsRowSchema):
     day_of_month: int
