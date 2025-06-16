@@ -1,9 +1,7 @@
 from fastapi import Request
 from sqlalchemy.orm import Session
 
-from repositories.device import (
-    DeviceDataRepository,
-)
+from repositories.device_data import DeviceDataRepository
 from schemas.device_data import (
     DeviceDataBaseSchema,
     DeviceDataQueryParamsSchema,

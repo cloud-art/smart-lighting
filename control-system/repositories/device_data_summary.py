@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Optional, Sequence
 
 from sqlalchemy import func, select
@@ -36,12 +37,28 @@ class DeviceDataSummaryRepository:
         db_item = result.scalars().first()
         return db_item
 
-    def get_all(self, page: int, page_size: int, device_id: Optional[int] = None):
-        offset = (page - 1) * page_size
+    def get_all(
+        self,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
+        device_id: Optional[int] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ):
         query = self._select()
+
         if device_id is not None:
             query = query.filter(DeviceDataModel.device_id == device_id)
-        query = query.order_by(DeviceDataModel.id).offset(offset).limit(page_size)
+        if start_date is not None:
+            query = query.filter(DeviceDataModel.timestamp >= start_date)
+        if end_date is not None:
+            query = query.filter(DeviceDataModel.timestamp <= end_date)
+
+        query = query.order_by(DeviceDataModel.id)
+
+        if (page or page_size) is not None:
+            offset = (page - 1) * page_size
+            query = query.offset(offset).limit(page_size)
 
         result = self.db.execute(query).scalars().all()
         return result
