@@ -13,6 +13,8 @@ import {
 
 export type DeviceStatsParams = {
   device?: number;
+  start_date?: string;
+  end_date?: string;
 };
 
 export const deviceStatsQueries = {
@@ -34,8 +36,9 @@ export const deviceStatsQueries = {
     DeviceStatsParams
   > = {}) =>
     queryOptions({
-      queryKey: [...deviceStatsQueries.averages("hourly")],
-      queryFn: async ({ signal }) => getDeviceDataHourlyAverages({ signal }),
+      queryKey: [...deviceStatsQueries.averages("hourly", params)],
+      queryFn: async ({ signal }) =>
+        getDeviceDataHourlyAverages({ signal, params }),
       ...options,
     }),
 
@@ -48,8 +51,9 @@ export const deviceStatsQueries = {
     DeviceStatsParams
   > = {}) =>
     queryOptions({
-      queryKey: [...deviceStatsQueries.averages("weekday")],
-      queryFn: async ({ signal }) => getDeviceDataWeekdayAverages({ signal }),
+      queryKey: [...deviceStatsQueries.averages("weekday", params)],
+      queryFn: async ({ signal }) =>
+        getDeviceDataWeekdayAverages({ signal, params }),
       ...options,
     }),
 
@@ -62,8 +66,9 @@ export const deviceStatsQueries = {
     DeviceStatsParams
   > = {}) =>
     queryOptions({
-      queryKey: [...deviceStatsQueries.averages("daily")],
-      queryFn: async ({ signal }) => getDeviceDataDailyAverages({ signal }),
+      queryKey: [...deviceStatsQueries.averages("daily", params)],
+      queryFn: async ({ signal }) =>
+        getDeviceDataDailyAverages({ signal, params }),
       ...options,
     }),
 };

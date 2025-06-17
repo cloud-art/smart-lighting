@@ -1,7 +1,7 @@
 import { EditOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Button, Flex, Table, TableColumnsType, TableProps } from "antd";
-import { format, parseISO } from "date-fns";
+import { format, formatISO, parseISO } from "date-fns";
 import { Key, useEffect, useState, type FC } from "react";
 import { DeviceCorrectedDimmingUpdateModal } from "~/features/change-device-data-dim";
 import { DeviceCorrectedDimmingBulkUpdateModal } from "~/features/change-device-data-dim/ui/DeviceCorrectedDimmingBulkUpdateModal";
@@ -14,6 +14,10 @@ import { PaginationParams } from "~/shared/lib/api";
 import { dateFormat } from "~/shared/lib/date";
 
 import { AppPage } from "~/shared/ui/page-layout";
+import {
+  DeviceDataFilters,
+  DeviceDataFilterValues,
+} from "./ui/device-data-filters";
 
 const PAGE_SIZE = 20;
 
@@ -25,10 +29,18 @@ const DevicesPage: FC = () => {
 
   const [isMultipleMode, setIsMultipleMode] = useState(false);
   const [selectedDevices, setSelectedDevices] = useState<number[]>([]);
+  const [filters, setFilters] = useState<DeviceDataFilterValues>({});
 
   const deviceDataSummaryQuery = useQuery({
     ...deviceDataSummaryQueries.list({
-      params: pagination,
+      params: {
+        ...pagination,
+        device: filters.device,
+        start_date: filters.start_date
+          ? formatISO(filters.start_date)
+          : undefined,
+        end_date: filters.end_date ? formatISO(filters.end_date) : undefined,
+      },
     }),
     placeholderData: (data) => data,
   });
@@ -171,6 +183,8 @@ const DevicesPage: FC = () => {
 
   return (
     <AppPage title="Устройства" containerClassName="flex flex-col gap-2">
+      <DeviceDataFilters value={filters} onChange={setFilters} />
+
       <Flex gap={8} align="center" justify="space-between">
         <Button onClick={() => setIsMultipleMode((v) => !v)}>
           {isMultipleMode

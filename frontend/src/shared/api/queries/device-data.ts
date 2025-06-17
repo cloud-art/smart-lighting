@@ -7,6 +7,8 @@ import { DeviceData, getDeviceDataList } from "../services/device-data";
 
 export type DeviceDataListParams = PaginationParams & {
   device?: Number;
+  start_date?: string;
+  end_date?: string;
 };
 
 export const deviceDataQueries = {

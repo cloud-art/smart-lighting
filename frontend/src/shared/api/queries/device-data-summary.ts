@@ -10,6 +10,8 @@ import {
 
 export type DeviceDataSummaryListParams = PaginationParams & {
   device?: Number;
+  start_date?: string;
+  end_date?: string;
 };
 
 export const deviceDataSummaryQueries = {
