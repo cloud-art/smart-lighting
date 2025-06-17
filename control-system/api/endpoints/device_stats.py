@@ -11,10 +11,10 @@ from schemas.device_stats import (
 )
 from services.device_stats import DeviceStatsService
 
-router = APIRouter(prefix="/device_stats", tags=["Device Statistics"])
+router = APIRouter(prefix="/device-stats", tags=["Device Statistics"])
 
 
-@router.get("/hourly_averages/", response_model=List[DeviceHourlyAveragesStats])
+@router.get("/hourly-averages/", response_model=List[DeviceHourlyAveragesStats])
 def get_hourly_averages(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
@@ -26,7 +26,7 @@ def get_hourly_averages(
     )
 
 
-@router.get("/weekday_averages/", response_model=List[DeviceWeekdayAverageStats])
+@router.get("/weekday-averages/", response_model=List[DeviceWeekdayAverageStats])
 def get_weekday_averages(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
@@ -38,7 +38,7 @@ def get_weekday_averages(
     )
 
 
-@router.get("/daily_averages/", response_model=Sequence[DeviceDailyAverageStats])
+@router.get("/daily-averages/", response_model=Sequence[DeviceDailyAverageStats])
 def get_daily_averages(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
