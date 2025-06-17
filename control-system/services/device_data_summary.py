@@ -46,10 +46,18 @@ class DeviceDataSummaryService:
         page: int,
         page_size: int,
     ):
-        total_count = self.repository.get_total_count(device_id=params.device)
+        total_count = self.repository.get_total_count(
+            device_id=params.device,
+            start_date=params.start_date,
+            end_date=params.end_date,
+        )
 
         result = self.repository.get_all(
-            page=page, page_size=page_size, device_id=params.device
+            page=page,
+            page_size=page_size,
+            device_id=params.device,
+            start_date=params.start_date,
+            end_date=params.end_date,
         )
 
         items = [DeviceDataSummarySchema.model_validate(item) for item in result]

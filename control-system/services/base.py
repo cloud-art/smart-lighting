@@ -52,8 +52,8 @@ class BaseCRUDService[InstanceSchemaType: BaseCRUDServiceSchema]:
     def get_all(
         self,
         request: Request,
-        page: int,
-        page_size: int,
+        page: Optional[int] = None,
+        page_size: Optional[int] = None,
         filters: Optional[Dict[str, Any]] = None,
         joins: Optional[List[Tuple[str, Any]]] = None,
         order_by: Optional[Dict[str, Any]] = None,

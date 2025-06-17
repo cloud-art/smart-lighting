@@ -63,10 +63,19 @@ class DeviceDataSummaryRepository:
         result = self.db.execute(query).scalars().all()
         return result
 
-    def get_total_count(self, device_id: Optional[int] = None):
+    def get_total_count(
+        self,
+        device_id: Optional[int] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ):
         query = select(func.count()).select_from(DeviceDataModel)
         if device_id is not None:
             query = query.where(DeviceDataModel.device_id == device_id)
+        if start_date is not None:
+            query = query.filter(DeviceDataModel.timestamp >= start_date)
+        if end_date is not None:
+            query = query.filter(DeviceDataModel.timestamp <= end_date)
 
         return self.db.scalar(query)
 

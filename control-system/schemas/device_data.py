@@ -68,17 +68,25 @@ class DeviceDataSummaryBulkUpdateSchema(BulkUpdateSchema):
 
 class DeviceDataSummaryQueryParamsSchema(BaseModel):
     device: Optional[int]
+    start_date: Optional[datetime]
+    end_date: Optional[datetime]
 
 
 class DeviceDataSummaryQueryParams:
     def __init__(
         self,
-        device: int = Query(None, description="Идентификатор устройства"),
+        device: Optional[int] = Query(None, description="Идентификатор устройства"),
+        start_date: Optional[datetime] = Query(None),
+        end_date: Optional[datetime] = Query(None),
     ):
         self.device = device
+        self.start_date = start_date
+        self.end_date = end_date
 
     def to_schema(self) -> DeviceDataSummaryQueryParamsSchema:
-        return DeviceDataSummaryQueryParamsSchema(device=self.device)
+        return DeviceDataSummaryQueryParamsSchema(
+            device=self.device, start_date=self.start_date, end_date=self.end_date
+        )
 
 
 class DeviceDataSummaryResponse(BaseModel):
