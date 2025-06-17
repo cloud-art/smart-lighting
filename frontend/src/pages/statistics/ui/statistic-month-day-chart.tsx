@@ -1,6 +1,6 @@
 import { addDays, format, startOfMonth } from "date-fns";
 import type { FC } from "react";
-import { DeviceDataDayAverages } from "~/shared/api/services/device-data";
+import { DeviceDataDayAverages } from "~/shared/api/services/device-stats";
 import { AppLineChart } from "~/shared/ui/charts";
 import { StatisticChartBaseProps } from "./common";
 import { StatisticChartTooltipContent } from "./statistic-chart-tooltip-content";

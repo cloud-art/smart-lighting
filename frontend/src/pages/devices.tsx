@@ -6,6 +6,9 @@ import { Key, useEffect, useState, type FC } from "react";
 import { DeviceCorrectedDimmingUpdateModal } from "~/features/change-device-data-dim";
 import { DeviceCorrectedDimmingBulkUpdateModal } from "~/features/change-device-data-dim/ui/DeviceCorrectedDimmingBulkUpdateModal";
 import { deviceDataSummaryQueries } from "~/shared/api/queries/device-data-summary";
+import { DeviceControlType } from "~/shared/api/services/device";
+import { WeatherType } from "~/shared/api/services/device-data";
+import { DeviceDataCalculatedDim } from "~/shared/api/services/device-data-calculated-dim";
 import { DeviceDataSummary } from "~/shared/api/services/device-data-summary";
 import { PaginationParams } from "~/shared/lib/api";
 import { dateFormat } from "~/shared/lib/date";
@@ -41,9 +44,32 @@ const DevicesPage: FC = () => {
         return format(parsedDate, dateFormat.datetime);
       },
     },
-    { dataIndex: "serial_number", title: "Серийный номер" },
-    { dataIndex: "latitude", title: "Широта" },
-    { dataIndex: "longitude", title: "Долгота" },
+    {
+      dataIndex: "serial_number",
+      title: "Серийный номер",
+      render: (_, { device }) => device.serial_number,
+    },
+    {
+      dataIndex: "control_type",
+      title: "Тип управления",
+      render: (_, { device }) => {
+        if (device.control_type === DeviceControlType.SIMPLE_RULES)
+          return "Простые правила";
+        if (device.control_type === DeviceControlType.AI_MODEL)
+          return "Модель ИИ";
+        return "- ";
+      },
+    },
+    {
+      dataIndex: "latitude",
+      title: "Широта",
+      render: (_, { device }) => device.latitude,
+    },
+    {
+      dataIndex: "longitude",
+      title: "Долгота",
+      render: (_, { device }) => device.longitude,
+    },
     { dataIndex: "car_count", title: "Кол-во машин" },
     { dataIndex: "traffic_speed", title: "Скорость страфика" },
     { dataIndex: "traffic_density", title: "Плотность трафика" },
@@ -59,9 +85,20 @@ const DevicesPage: FC = () => {
     {
       dataIndex: "lighting_class",
       title: "Класс освещения дороги",
+      render: (_, { device }) => device.lighting_class,
     },
     { dataIndex: "lamp_power", title: "Мощность лампы" },
-    { dataIndex: "weather", title: "Погода" },
+    {
+      dataIndex: "weather",
+      title: "Погода",
+      render: (value: WeatherType) => {
+        if (value === WeatherType.CLEAR) return "Ясно";
+        if (value === WeatherType.CLOUDS) return "Облачно";
+        if (value === WeatherType.RAIN) return "Дождь";
+        if (value === WeatherType.FOG) return "Туман";
+        return "- ";
+      },
+    },
     {
       dataIndex: "dimming_level",
       title: "Уровень диммирования",
@@ -71,36 +108,34 @@ const DevicesPage: FC = () => {
       dataIndex: "calculated_dimming_level",
       title: "Вычисленное значение",
       fixed: "right",
+      render: (value?: DeviceDataCalculatedDim | null) => {
+        if (!value) return "-";
+        return value.dimming_level;
+      },
     },
     {
       dataIndex: "corrected_dimming_level",
       title: "Экспертное значение",
       fixed: "right",
-      render: (value: string | null | undefined, record) => {
-        let formatedValue = value;
-        if (value === undefined || value === null) {
-          formatedValue = "-";
-        }
+      render: (value: DeviceDataCalculatedDim | null | undefined, record) => (
+        <Flex gap={8} justify="space-around" align="center">
+          {value?.dimming_level ?? "-"}
 
-        return (
-          <Flex gap={8} justify="space-around" align="center">
-            {formatedValue}
-
-            <DeviceCorrectedDimmingUpdateModal
-              form={{
-                initialValues: {
-                  id: record.id,
-                  corrected_dimming_level: record.corrected_dimming_level,
-                },
-              }}
-              idFormItem={{ hidden: true }}
-              renderButton={(onClick) => (
-                <Button type="text" icon={<EditOutlined />} onClick={onClick} />
-              )}
-            />
-          </Flex>
-        );
-      },
+          <DeviceCorrectedDimmingUpdateModal
+            form={{
+              initialValues: {
+                id: record.id,
+                corrected_dimming_level:
+                  record.corrected_dimming_level?.dimming_level,
+              },
+            }}
+            idFormItem={{ hidden: true }}
+            renderButton={(onClick) => (
+              <Button type="text" icon={<EditOutlined />} onClick={onClick} />
+            )}
+          />
+        </Flex>
+      ),
     },
   ];
 

@@ -3,7 +3,7 @@ import type { PaginatedResponse } from "~/shared/lib/api";
 import { AxiosRequestConfig } from "axios";
 import { client } from "../client";
 
-const ENDPOINT = "api/device_data_corrected_dim/";
+const ENDPOINT = "api/device-data-corrected-dim/";
 
 export type DeviceDataCorrectedDim = {
   id: number;

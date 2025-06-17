@@ -1,17 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, Empty, Spin } from "antd";
 import type { FC } from "react";
-import { deviceDataQueries } from "~/shared/api/queries/device-data";
 
 import { AppPage } from "~/shared/ui/page-layout";
 import { StatisticHourlyChart } from "./ui/statistic-hourly-chart";
 import { StatisticMonthDayChart } from "./ui/statistic-month-day-chart";
 import { StatisticWeekdayChart } from "./ui/statistic-weekday-chart";
+import { deviceStatsQueries } from "~/shared/api/queries/device-stats";
 
 const StatisticsPage: FC = () => {
-  const hourlyAveragesQuery = useQuery(deviceDataQueries.hourlyAverages());
-  const weekdayAveragesQuery = useQuery(deviceDataQueries.weekdayAverages());
-  const dailyAveragesQuery = useQuery(deviceDataQueries.dailyAverages());
+  const hourlyAveragesQuery = useQuery(deviceStatsQueries.hourlyAverages());
+  const weekdayAveragesQuery = useQuery(deviceStatsQueries.weekdayAverages());
+  const dailyAveragesQuery = useQuery(deviceStatsQueries.dailyAverages());
 
   return (
     <AppPage title="Статистика" containerClassName="flex flex-col gap-3">

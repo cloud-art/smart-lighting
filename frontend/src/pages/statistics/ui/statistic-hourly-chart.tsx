@@ -1,6 +1,6 @@
 import { format, parse } from "date-fns";
 import type { FC } from "react";
-import { DeviceDataHourlyAverages } from "~/shared/api/services/device-data";
+import { DeviceDataHourlyAverages } from "~/shared/api/services/device-stats";
 import { AppLineChart } from "~/shared/ui/charts";
 import { StatisticChartBaseProps } from "./common";
 import { StatisticChartTooltipContent } from "./statistic-chart-tooltip-content";
@@ -85,7 +85,7 @@ export const StatisticHourlyChart: FC<StatisticHourlyChartProps> = ({
       )}
       xAxis={{
         dataKey: ([hour]) => {
-          const parsedDate = parse(hour, "HH", new Date());
+          const parsedDate = parse(String(hour), "H", new Date());
           return format(parsedDate, "HH:00");
         },
       }}

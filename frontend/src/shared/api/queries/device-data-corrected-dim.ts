@@ -8,10 +8,14 @@ import {
   getDeviceDataCorrectedDimList,
 } from "../services/device-data-corrected-dim";
 
+export type DeviceDataCorrectedDimListParams = PaginationParams & {
+  device?: Number
+}
+
 export const deviceDataCorrectedDimQueries = {
   all: () => ["device-data-corrected-dim"],
 
-  lists: (params: PaginationParams = {}) => [
+  lists: (params: DeviceDataCorrectedDimListParams = {}) => [
     ...deviceDataCorrectedDimQueries.all(),
     "list",
     params,
@@ -23,7 +27,7 @@ export const deviceDataCorrectedDimQueries = {
   }: BaseUseQueryOptions<
     PaginatedResponse<DeviceDataCorrectedDim>,
     TData,
-    PaginationParams
+    DeviceDataCorrectedDimListParams
   > = {}) =>
     queryOptions({
       queryKey: [...deviceDataCorrectedDimQueries.lists(params)],

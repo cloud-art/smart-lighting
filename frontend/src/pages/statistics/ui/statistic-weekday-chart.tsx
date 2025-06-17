@@ -1,6 +1,6 @@
 import { addDays, format, startOfWeek } from "date-fns";
 import type { FC } from "react";
-import { DeviceDataWeekdayAverages } from "~/shared/api/services/device-data";
+import { DeviceDataWeekdayAverages } from "~/shared/api/services/device-stats";
 import { AppLineChart } from "~/shared/ui/charts";
 import { StatisticChartBaseProps } from "./common";
 import { StatisticChartTooltipContent } from "./statistic-chart-tooltip-content";

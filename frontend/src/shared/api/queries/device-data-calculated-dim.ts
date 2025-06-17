@@ -8,10 +8,14 @@ import {
   getDeviceDataCalculatedDimList,
 } from "../services/device-data-calculated-dim";
 
+export type DeviceDataCalculatedDimListParams = PaginationParams & {
+  device?: Number;
+};
+
 export const deviceDataCalculatedDimQueries = {
   all: () => ["device-data-calculated-dim"],
 
-  lists: (params: PaginationParams = {}) => [
+  lists: (params: DeviceDataCalculatedDimListParams = {}) => [
     ...deviceDataCalculatedDimQueries.all(),
     "list",
     params,
@@ -23,7 +27,7 @@ export const deviceDataCalculatedDimQueries = {
   }: BaseUseQueryOptions<
     PaginatedResponse<DeviceDataCalculatedDim>,
     TData,
-    PaginationParams
+    DeviceDataCalculatedDimListParams
   > = {}) =>
     queryOptions({
       queryKey: [...deviceDataCalculatedDimQueries.lists(params)],

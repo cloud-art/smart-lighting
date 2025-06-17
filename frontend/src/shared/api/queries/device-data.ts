@@ -3,21 +3,16 @@ import type { BaseUseQueryOptions } from "./common";
 
 import { queryOptions } from "@tanstack/react-query";
 
-import {
-  DeviceData,
-  DeviceDataDayAverages,
-  DeviceDataHourlyAverages,
-  DeviceDataWeekdayAverages,
-  getDeviceDataDailyAverages,
-  getDeviceDataHourlyAverages,
-  getDeviceDataList,
-  getDeviceDataWeekdayAverages,
-} from "../services/device-data";
+import { DeviceData, getDeviceDataList } from "../services/device-data";
+
+export type DeviceDataListParams = PaginationParams & {
+  device?: Number;
+};
 
 export const deviceDataQueries = {
   all: () => ["device-data"],
 
-  lists: (params: PaginationParams = {}) => [
+  lists: (params: DeviceDataListParams = {}) => [
     ...deviceDataQueries.all(),
     "list",
     params,
@@ -29,43 +24,11 @@ export const deviceDataQueries = {
   }: BaseUseQueryOptions<
     PaginatedResponse<DeviceData>,
     TData,
-    PaginationParams
+    DeviceDataListParams
   > = {}) =>
     queryOptions({
       queryKey: [...deviceDataQueries.lists(params)],
       queryFn: async ({ signal }) => getDeviceDataList({ signal, params }),
-      ...options,
-    }),
-
-  averages: (key?: string) => [...deviceDataQueries.all(), "averages", key],
-
-  hourlyAverages: <TData extends object = DeviceDataHourlyAverages[]>({
-    params,
-    ...options
-  }: BaseUseQueryOptions<DeviceDataHourlyAverages[], TData> = {}) =>
-    queryOptions({
-      queryKey: [...deviceDataQueries.averages("hourly")],
-      queryFn: async ({ signal }) => getDeviceDataHourlyAverages({ signal }),
-      ...options,
-    }),
-
-  weekdayAverages: <TData extends object = DeviceDataWeekdayAverages[]>({
-    params,
-    ...options
-  }: BaseUseQueryOptions<DeviceDataWeekdayAverages[], TData> = {}) =>
-    queryOptions({
-      queryKey: [...deviceDataQueries.averages("weekday")],
-      queryFn: async ({ signal }) => getDeviceDataWeekdayAverages({ signal }),
-      ...options,
-    }),
-
-  dailyAverages: <TData extends object = DeviceDataDayAverages[]>({
-    params,
-    ...options
-  }: BaseUseQueryOptions<DeviceDataDayAverages[], TData> = {}) =>
-    queryOptions({
-      queryKey: [...deviceDataQueries.averages("daily")],
-      queryFn: async ({ signal }) => getDeviceDataDailyAverages({ signal }),
       ...options,
     }),
 };

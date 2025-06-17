@@ -8,10 +8,14 @@ import {
   getDeviceDataSummaryList,
 } from "../services/device-data-summary";
 
+export type DeviceDataSummaryListParams = PaginationParams & {
+  device?: Number;
+};
+
 export const deviceDataSummaryQueries = {
   all: () => ["device-data-calculated-dim"],
 
-  lists: (params: PaginationParams = {}) => [
+  lists: (params: DeviceDataSummaryListParams = {}) => [
     ...deviceDataSummaryQueries.all(),
     "list",
     params,
@@ -23,7 +27,7 @@ export const deviceDataSummaryQueries = {
   }: BaseUseQueryOptions<
     PaginatedResponse<DeviceDataSummary>,
     TData,
-    PaginationParams
+    DeviceDataSummaryListParams
   > = {}) =>
     queryOptions({
       queryKey: [...deviceDataSummaryQueries.lists(params)],
