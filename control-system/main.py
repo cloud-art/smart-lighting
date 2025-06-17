@@ -4,8 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import api
+from core.config import settings
 from core.db import Base, engine
 from core.dependencies.db import get_db
+from services.ai_model import AiModel
 from services.mqtt import MQTTClient
 
 
@@ -14,7 +16,8 @@ async def lifespan(app: FastAPI):
     create_tables()
 
     db = next(get_db())
-    mqtt_client = MQTTClient(db)
+    ai_model = AiModel(settings.MODEL_PATH)
+    mqtt_client = MQTTClient(db, ai_model)
 
     try:
         await mqtt_client.start()

@@ -9,18 +9,19 @@ from repositories.device import DeviceDataCalculatedDimRepository
 from repositories.device_data import DeviceDataRepository
 from schemas.device_data import DeviceDataSchema
 from schemas.device_data_dim_info import (
-    DeviceDataDimInfoDBItem,
     DeviceDataDimInfoSchema,
 )
 from schemas.mqtt import MQTTPayload
 from schemas.mqtt_message import DeviceDataMessage
 from services.dim_calculator import DimmingCalculator
-from tasks.db_operations import DeviceDataDBService
 
 
 @app.task
 def handle_mqtt_device_data_create(
-    device_data_message_dict: dict, publish_fn: Callable[[str, str], None], db: Session
+    device_data_message_dict: dict,
+    publish_fn: Callable[[str, str], None],
+    db: Session,
+    dimming_calculator: DimmingCalculator,
 ):
     try:
         device_data_repo = DeviceDataRepository(db)
@@ -32,10 +33,10 @@ def handle_mqtt_device_data_create(
         device_data_model = device_data_repo.create(device_data_create)
         device_data = DeviceDataSchema.model_validate(device_data_model)
 
-        dim_level = DimmingCalculator.calculate(device_data)
+        dim_level = dimming_calculator.calculate(device_data)
         payload = MQTTPayload(action=Command.SET_DIMMING, value=dim_level)
         payload_str = payload.model_dump_json()
-        topic = get_device_publish_topic(device_data.device.serial_number)
+        topic = get_device_publish_topic(device_data.device.id)
         publish_fn(topic, payload_str)
 
         calculated_dim_repo.create(

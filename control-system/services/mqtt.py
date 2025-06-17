@@ -10,14 +10,17 @@ from core.config import settings
 from core.logger import logger
 from core.mqtt import DEVICE_RECIEVE_TOPIC, Command
 from schemas.mqtt import MQTTPayload
+from services.ai_model import AiModel
+from services.dim_calculator import DimmingCalculator
 from tasks.mqtt import handle_mqtt_device_data_create
 
 
 class MQTTClient:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, ai_model: AiModel):
         self.client = Client()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._handler = MessageHandler(self, db)
+        self.dimming_calculator = DimmingCalculator(ai_model=ai_model)
+        self._handler = MessageHandler(self, db, self.dimming_calculator)
         self._configure_client()
 
     def _configure_client(self) -> None:
@@ -68,9 +71,15 @@ class MQTTClient:
 
 
 class MessageHandler:
-    def __init__(self, mqtt_client: MQTTClient, db: Session):
+    def __init__(
+        self,
+        mqtt_client: MQTTClient,
+        db: Session,
+        dimming_calculator: DimmingCalculator,
+    ):
         self.mqtt_client = mqtt_client
         self.db = db
+        self.dimming_calculator = dimming_calculator
         self.matcher = MQTTMatcher()
         self.matcher[DEVICE_RECIEVE_TOPIC] = "DEVICE_DATA_RECIEVE"
 
@@ -91,7 +100,12 @@ class MessageHandler:
 
     def handle_device_data_message(self, msg: MQTTMessage):
         payload = self._parse_payload(msg)
-        handle_mqtt_device_data_create(payload, self.mqtt_client.publish, self.db)
+        handle_mqtt_device_data_create(
+            payload,
+            publish_fn=self.mqtt_client.publish,
+            db=self.db,
+            dimming_calculator=self.dimming_calculator,
+        )
 
     def _parse_payload(self, msg: MQTTMessage) -> Any:
         return json.loads(msg.payload.decode())

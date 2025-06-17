@@ -23,9 +23,9 @@ export const StatisticMonthDayChart: FC<StatisticMonthDayChartProps> = ({
             const [
               day_of_month,
               avg_dimming_level,
+              avg_calculated_dim,
               avg_corrected_dim,
               avg_traffic_speed,
-              avg_calculated_dim,
               avg_car_count,
               avg_pedestrian_count,
             ] = data.payload;
@@ -39,14 +39,14 @@ export const StatisticMonthDayChart: FC<StatisticMonthDayChartProps> = ({
                     value: avg_dimming_level,
                   },
                   {
+                    label: "Вычисленное значение",
+                    value: avg_calculated_dim,
+                  },
+                  {
                     label: "Экспертная оценка",
                     value: avg_corrected_dim,
                   },
                   { label: "Скорость трафика", value: avg_traffic_speed },
-                  {
-                    label: "Вычисленное значение",
-                    value: avg_calculated_dim,
-                  },
                   { label: "Количество машин", value: avg_car_count },
                   {
                     label: "Количество пешеходов",
@@ -61,6 +61,7 @@ export const StatisticMonthDayChart: FC<StatisticMonthDayChartProps> = ({
       columns={[
         null,
         { color: "blue", name: "Уровень диммирования" },
+        { color: "green", name: "Вычисленное значение" },
         { color: "red", name: "Оценка эксперта" },
       ]}
       lineProps={{ type: "monotone" }}
@@ -68,17 +69,17 @@ export const StatisticMonthDayChart: FC<StatisticMonthDayChartProps> = ({
         ({
           day_of_month,
           avg_dimming_level,
+          avg_calculated_dim,
           avg_corrected_dim,
           avg_traffic_speed,
-          avg_calculated_dim,
           avg_car_count,
           avg_pedestrian_count,
         }) => [
           day_of_month,
           avg_dimming_level,
+          avg_calculated_dim,
           avg_corrected_dim,
           avg_traffic_speed,
-          avg_calculated_dim,
           avg_car_count,
           avg_pedestrian_count,
         ]

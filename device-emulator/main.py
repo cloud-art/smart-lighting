@@ -1,10 +1,8 @@
 import json
-import random
 import time
 import os
 from datetime import datetime
 from paho.mqtt.client import Client
-from dateutil.relativedelta import relativedelta
 from enum import Enum
 
 
@@ -16,16 +14,18 @@ MQTT_PASS = os.getenv("MQTT_PASS", "0000")
 PUBLISH_TOPIC = "devices/1/data"
 CONTROL_TOPIC = "devices/1/control"
 
-class Command(Enum):
-    SET_DIMMING = 'set_dimming'
 
-current_state = {
-    "dimming_level": 50
-}
+class Command(Enum):
+    SET_DIMMING = "set_dimming"
+
+
+current_state = {"dimming_level": 50}
+
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT Broker with result code {rc}")
     client.subscribe(CONTROL_TOPIC)
+
 
 def on_message(client, userdata, msg):
     global current_state
@@ -46,6 +46,7 @@ def on_message(client, userdata, msg):
     except Exception as e:
         print(f"Error processing command: {e}")
 
+
 def main():
     client = Client()
     client.username_pw_set(MQTT_USER, MQTT_PASS)
@@ -57,19 +58,23 @@ def main():
 
     try:
         data = []
-        with open('data.json') as f:
+        with open("data.json") as f:
             data = json.load(f)
 
         for hour_data in data:
             hour_data["dimming_level"] = current_state["dimming_level"]
             hour_data["lamp_power"] = current_state["dimming_level"] * 1.5
+            hour_data["device"] = 1
             payload = json.dumps(hour_data)
             client.publish(PUBLISH_TOPIC, payload)
-            print(f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n")
-            time.sleep(2.5)
+            print(
+                f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n"
+            )
+            time.sleep(0.1)
     except KeyboardInterrupt:
         client.disconnect()
         print("Disconnected from broker.")
+
 
 if __name__ == "__main__":
     main()

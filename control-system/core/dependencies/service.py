@@ -1,9 +1,7 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from core.config import settings
 from core.dependencies.db import get_db
-from services.ai_model import AiModel
 from services.device import (
     DeviceService,
 )
@@ -13,10 +11,6 @@ from services.device_data_corrected_dim import DeviceDataCorrectedDimService
 from services.device_data_exports import DeviceDataExportsService
 from services.device_data_summary import DeviceDataSummaryService
 from services.device_stats import DeviceStatsService
-
-
-def get_ai_model() -> AiModel:
-    return AiModel(settings.MODEL_PATH)
 
 
 def get_device_data_service(db: Session = Depends(get_db)) -> DeviceDataService:
