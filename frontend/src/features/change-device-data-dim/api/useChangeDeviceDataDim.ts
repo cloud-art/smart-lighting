@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deviceDataSummaryQueries } from "~/shared/api/queries/device-data-summary";
 
 import {
+  DeviceDataSummary,
   DeviceDataSummaryUpdateBody,
-  DeviceDataSummaryUpdateResponse,
   patchDeviceDataSummary,
 } from "~/shared/api/services/device-data-summary";
 import { handleError } from "~/shared/lib/api";
@@ -15,7 +15,7 @@ export function useChangeDeviceDataDim({
   onError,
   ...options
 }: MutationOptions<
-  DeviceDataSummaryUpdateResponse,
+  DeviceDataSummary,
   DefaultError,
   DeviceDataSummaryUpdateBody & { id?: number }
 >) {

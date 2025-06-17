@@ -43,7 +43,7 @@ export const patchDeviceDataSummary = (
 };
 
 export const deviceDataSummaryBulkUpdate = (
-  data: DeviceDataSummaryUpdateBody[],
+  data: DeviceDataSummaryUpdateBody,
   config?: AxiosRequestConfig
 ) => {
   return client.post<number>(ENDPOINT.concat("bulk_update/"), data, config);

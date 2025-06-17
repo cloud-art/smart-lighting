@@ -10,10 +10,7 @@ import type { FC, ReactNode } from "react";
 
 import { useRef } from "react";
 import { useApiErrorHandler } from "~/shared/api/error";
-import {
-  DeviceDataSummaryBulkUpdateBody,
-  DeviceDataSummaryBulkUpdateResponse,
-} from "~/shared/api/services/device-data-summary";
+import { DeviceDataSummaryBulkUpdateBody } from "~/shared/api/services/device-data-summary";
 import { ModalButton, ModalButtonRef } from "~/shared/ui/modal-button";
 import { useBulkChangeDeviceDataDim } from "../api/useBulkChangeDeviceDataDim";
 
@@ -28,7 +25,7 @@ export type DeviceCorrectedDimmingBulkUpdateModalProps = {
   form?: FormProps<DeviceCorrectedDimmingBulkUpdateFormInstance>;
   dimFormItem?: FormItemProps;
   renderButton?: (onClick: () => void) => ReactNode;
-  onSuccess?: (data: DeviceDataSummaryBulkUpdateResponse) => void;
+  onSuccess?: (data: number) => void;
 };
 
 export const DeviceCorrectedDimmingBulkUpdateModal: FC<
@@ -62,12 +59,10 @@ export const DeviceCorrectedDimmingBulkUpdateModal: FC<
   const handleSubmit = async () => {
     try {
       const data = await form.validateFields();
-      editCorrectedDimmingMutation.mutateAsync(
-        deviceDataIds.map((deviceData) => ({
-          device_data_id: deviceData,
-          corrected_dimming_level: data.corrected_dimming_level,
-        }))
-      );
+      editCorrectedDimmingMutation.mutateAsync({
+        ids: deviceDataIds,
+        corrected_dimming_level: data.corrected_dimming_level,
+      });
     } catch {
       message.error("Ошибка валидации формы");
     }

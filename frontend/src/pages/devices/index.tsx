@@ -18,6 +18,7 @@ import {
   DeviceDataFilters,
   DeviceDataFilterValues,
 } from "./ui/device-data-filters";
+import { ExportDeviceDataModal } from "~/features/export-device-data";
 
 const PAGE_SIZE = 20;
 
@@ -183,7 +184,15 @@ const DevicesPage: FC = () => {
 
   return (
     <AppPage title="Устройства" containerClassName="flex flex-col gap-2">
-      <DeviceDataFilters value={filters} onChange={setFilters} />
+      <Flex gap={12} justify="space-between" align="center">
+        <DeviceDataFilters value={filters} onChange={setFilters} />
+
+        <ExportDeviceDataModal
+          renderButton={(onClick) => (
+            <Button onClick={onClick}>Выгрузить</Button>
+          )}
+        />
+      </Flex>
 
       <Flex gap={8} align="center" justify="space-between">
         <Button onClick={() => setIsMultipleMode((v) => !v)}>

@@ -6,7 +6,6 @@ import { deviceDataSummaryQueries } from "~/shared/api/queries/device-data-summa
 import {
   deviceDataSummaryBulkUpdate,
   DeviceDataSummaryBulkUpdateBody,
-  DeviceDataSummaryBulkUpdateResponse,
 } from "~/shared/api/services/device-data-summary";
 import { handleError } from "~/shared/lib/api";
 
@@ -14,11 +13,7 @@ export function useBulkChangeDeviceDataDim({
   onSuccess,
   onError,
   ...options
-}: MutationOptions<
-  DeviceDataSummaryBulkUpdateResponse,
-  DefaultError,
-  DeviceDataSummaryBulkUpdateBody[]
->) {
+}: MutationOptions<number, DefaultError, DeviceDataSummaryBulkUpdateBody>) {
   const queryClient = useQueryClient();
 
   return useMutation({
