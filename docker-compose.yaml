@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,7 +45,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,7 +69,6 @@ services:
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASS=${MQTT_PASS}
       - MQTT_KEEPALIVE=${MQTT_KEEPALIVE}
-      - MQTT_RECIEVE_TOPIC=${MQTT_RECIEVE_TOPIC}
       - REDIS_HOST=redis
       - REDIS_PORT=${REDIS_PORT}
       - MODEL_PATH=${MODEL_PATH}
@@ -82,7 +81,6 @@ services:
         - action: sync+restart
           path: control-system/
           target: /app
-
   # frontend:
   #   container_name: frontend-conteiner
   #   build: ./frontend

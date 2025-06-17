@@ -5,13 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api import api
 from core.db import Base, engine
-from core.dependencies.mqtt import get_mqtt_client
+from core.dependencies.db import get_db
+from services.mqtt import MQTTClient
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
-    mqtt_client = get_mqtt_client()
+
+    db = next(get_db())
+    mqtt_client = MQTTClient(db)
+
     try:
         await mqtt_client.start()
         yield

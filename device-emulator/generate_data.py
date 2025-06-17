@@ -1,34 +1,31 @@
 import random
 import json
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from tqdm import tqdm
 from enum import Enum
 
 SERIAL_NUMBER = "1"
-COORDINATES = (47.224860, 39.702285)
-LIGHTING_CLASS = "B1"
+DEVICE_ID = 1
 START_DATETIME = datetime.now() - relativedelta(months=6)
 DEFAULT_DIMMING = 0
 
+
 class ControlType(Enum):
-    SIMPLE_RULES = "simple_rules",
+    SIMPLE_RULES = ("simple_rules",)
     AI_MODEL = "ai_model"
 
 
-WEATHER_CHOISES = {
-    "CLEAR": 'clear',
-    "CLOUDS": "clouds",
-    "RAIN": 'rain',
-    "FOG": 'fog'
-}
+WEATHER_CHOISES = {"CLEAR": "clear", "CLOUDS": "clouds", "RAIN": "rain", "FOG": "fog"}
 
 MAX_CARS_COUNT = 80
 MAX_PEDS_COUNT = 40
 
+
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days) + 1):
         yield start_date + timedelta(n)
+
 
 def hour_generator(date):
     current = datetime(date.year, date.month, date.day, 0, 0, 0)
@@ -95,32 +92,41 @@ def generate_data(datetime: datetime, weather: str):
     cars = round(random.randint(cars_edges[0], cars_edges[1]) * cars_multiplier)
     peds = round(random.randint(peds_edges[0], peds_edges[1]) * peds_multiplier)
 
-    speed = (random.uniform(traffic_speed_edges[0], traffic_speed_edges[1]) if cars > 0 else 0) * traffic_speed_multiplier
+    speed = (
+        random.uniform(traffic_speed_edges[0], traffic_speed_edges[1])
+        if cars > 0
+        else 0
+    ) * traffic_speed_multiplier
     traffic_density = min(cars / MAX_CARS_COUNT, 1.0)
     pedestrian_density = min(peds / MAX_PEDS_COUNT, 1.0)
 
-    ambient_light = random.uniform(ambient_light_edges[0], ambient_light_edges[1]) * ambient_light_multiplier
+    ambient_light = (
+        random.uniform(ambient_light_edges[0], ambient_light_edges[1])
+        * ambient_light_multiplier
+    )
 
     return {
         "timestamp": datetime.isoformat(),
-        "serial_number": SERIAL_NUMBER,
-        "latitude": COORDINATES[0],
-        "longitude": COORDINATES[1],
+        "device": DEVICE_ID,
         "car_count": cars,
-        "control_type": ControlType.AI_MODEL.value,
         "traffic_speed": round(speed, 2),
         "traffic_density": round(traffic_density, 2),
         "pedestrian_count": peds,
         "pedestrian_density": round(pedestrian_density, 2),
         "ambient_light": round(ambient_light),
         "dimming_level": DEFAULT_DIMMING,
-        "lighting_class": LIGHTING_CLASS,
         "lamp_power": DEFAULT_DIMMING * 1.5,
-        "weather": weather
+        "weather": weather,
     }
 
+
 def get_day_weather():
-    values = [WEATHER_CHOISES.get("CLEAR"), WEATHER_CHOISES.get("CLOUDS"), WEATHER_CHOISES.get("RAIN"), WEATHER_CHOISES.get("FOG")]
+    values = [
+        WEATHER_CHOISES.get("CLEAR"),
+        WEATHER_CHOISES.get("CLOUDS"),
+        WEATHER_CHOISES.get("RAIN"),
+        WEATHER_CHOISES.get("FOG"),
+    ]
     weights = [45, 30, 20, 5]
 
     first_weather = random.choices(values, weights=weights, k=1)[0]
@@ -129,13 +135,15 @@ def get_day_weather():
 
     result_array = []
 
-    if (first_weather_start_hour + 12 > 23):
-        for i in range(24): 
-            if (first_weather_start_hour <= i <= 23) or (0 <= i < (first_weather_start_hour + 12) % 24):
+    if first_weather_start_hour + 12 > 23:
+        for i in range(24):
+            if (first_weather_start_hour <= i <= 23) or (
+                0 <= i < (first_weather_start_hour + 12) % 24
+            ):
                 result_array.append(first_weather)
-            else: 
+            else:
                 result_array.append(second_weather)
-    else:   
+    else:
         for i in range(24):
             if first_weather_start_hour <= i < first_weather_start_hour + 12:
                 result_array.append(first_weather)
@@ -143,6 +151,7 @@ def get_day_weather():
                 result_array.append(second_weather)
 
     return result_array
+
 
 def generate_last_three_monthes_data():
     now = datetime.now()
@@ -156,14 +165,15 @@ def generate_last_three_monthes_data():
             data = generate_data(curr_hour_date, current_weather)
             three_monthes_data.append(data)
 
-
     return three_monthes_data
+
 
 def main():
     generated_data = generate_last_three_monthes_data()
     # json_data = json.dumps(generated_data, indent=2)
-    with open('data.json','w+') as buf:
-        json.dump(generated_data,buf)
+    with open("data.json", "w+") as buf:
+        json.dump(generated_data, buf)
 
-if __name__ =='__main__':
+
+if __name__ == "__main__":
     main()

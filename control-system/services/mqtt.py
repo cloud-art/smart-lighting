@@ -1,20 +1,23 @@
 import asyncio
-from typing import Optional
+import json
+from typing import Any, Optional
 
 from paho.mqtt.client import Client, MQTTMessage
+from paho.mqtt.matcher import MQTTMatcher
+from sqlalchemy.orm import Session
 
 from core.config import settings
 from core.logger import logger
-from core.mqtt import Command
+from core.mqtt import DEVICE_RECIEVE_TOPIC, Command
 from schemas.mqtt import MQTTPayload
-from services.mqtt.handlers import MessageHandler
+from tasks.mqtt import handle_mqtt_device_data_create
 
 
 class MQTTClient:
-    def __init__(self):
+    def __init__(self, db: Session):
         self.client = Client()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._handler = MessageHandler(self)
+        self._handler = MessageHandler(self, db)
         self._configure_client()
 
     def _configure_client(self) -> None:
@@ -39,20 +42,14 @@ class MQTTClient:
     def _on_connect(self, client: Client, userdata, flags, rc: int) -> None:
         if rc == 0:
             logger.info("Connected to MQTT Broker!")
-            client.subscribe(settings.MQTT_RECIEVE_TOPIC)
+            client.subscribe(DEVICE_RECIEVE_TOPIC)
         else:
             logger.error(f"Connection failed with code {rc}")
 
     def _on_message(self, client: Client, userdata, msg: MQTTMessage) -> None:
         try:
             logger.debug(f"Message received on {msg.topic}")
-
-            def sendMessageBack(dim_level: int, device_data):
-                payload = self.create_payload(Command.SET_DIMMING, dim_level)
-                topic = self.get_device_publish_topic(device_data)
-                self.publish(topic, payload)
-
-            self._loop.create_task(self._handler.handle_message(msg, sendMessageBack))
+            self._handler.handle_message(msg)
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 
@@ -69,6 +66,32 @@ class MQTTClient:
         payload = MQTTPayload(action=command, value=value)
         return payload.model_dump_json()
 
-    @staticmethod
-    def get_device_publish_topic(device):
-        return "/control"
+
+class MessageHandler:
+    def __init__(self, mqtt_client: MQTTClient, db: Session):
+        self.mqtt_client = mqtt_client
+        self.db = db
+        self.matcher = MQTTMatcher()
+        self.matcher[DEVICE_RECIEVE_TOPIC] = "DEVICE_DATA_RECIEVE"
+
+    def handle_message(self, msg: MQTTMessage) -> None:
+        try:
+            logger.info(f"Processing message from {msg.topic}")
+            matched = self.matcher.iter_match(msg.topic)
+
+            if next(matched, None) == "DEVICE_DATA_RECIEVE":
+                self.handle_device_data_message(msg)
+            else:
+                logger.info("No one topic was proccessed")
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON payload: {e}")
+        except Exception as e:
+            logger.error(f"Message handling failed: {e}")
+
+    def handle_device_data_message(self, msg: MQTTMessage):
+        payload = self._parse_payload(msg)
+        handle_mqtt_device_data_create(payload, self.mqtt_client.publish, self.db)
+
+    def _parse_payload(self, msg: MQTTMessage) -> Any:
+        return json.loads(msg.payload.decode())

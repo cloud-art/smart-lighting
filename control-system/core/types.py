@@ -3,7 +3,7 @@ from typing import Literal
 
 LightingClass = Literal["A1", "B1", "C1", "D1"]
 
-Weather = Literal["clear", "rainy", "cloudly"]
+Weather = Literal["clear", "rain", "clouds", "fog"]
 
 ControlType = Literal["simple_rules", "ai_model"]
 

@@ -1,10 +1,10 @@
 from enum import Enum
 
-RECIEVE_TOPIC = "devices/+/data"
+DEVICE_RECIEVE_TOPIC = "devices/+/data"
 
 
-def get_publish_topic(device):
-    return f"devices/{device}/control"
+def get_device_publish_topic(id: str | int):
+    return f"devices/{id}/control"
 
 
 class Command(Enum):

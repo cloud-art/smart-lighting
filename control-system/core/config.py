@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     MQTT_USER: str
     MQTT_PASS: str
     MQTT_KEEPALIVE: int
-    MQTT_RECIEVE_TOPIC: str
 
     # DB
     DATABASE_HOST: str

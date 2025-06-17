@@ -6,7 +6,6 @@ from core.types import ControlType, LightingClass
 
 
 class DeviceBaseSchema(BaseModel):
-    mqtt_topic: str
     control_type: ControlType
     serial_number: str
     lighting_class: LightingClass

@@ -2,33 +2,33 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from schemas.device_data import DeviceDataCreateSchema, DeviceDataSchema
+from schemas.device_data import DeviceDataCreateSchema
 
 
 class DeviceDataMessage(BaseModel):
     timestamp: str
-    device: str
-    car_count: str
-    traffic_speed: str
-    traffic_density: str
-    pedestrian_count: str
-    pedestrian_density: str
-    ambient_light: str
-    dimming_level: str
-    lamp_power: str
+    device: int
+    car_count: int
+    traffic_speed: float
+    traffic_density: float
+    pedestrian_count: int
+    pedestrian_density: float
+    ambient_light: int
+    dimming_level: int
+    lamp_power: float
     weather: str
 
     def to_device_data_create(self) -> DeviceDataCreateSchema:
-        return DeviceDataSchema(
+        return DeviceDataCreateSchema(
             timestamp=datetime.fromisoformat(self.timestamp),
-            device_id=int(self.device_id),
-            car_count=int(self.car_count),
-            traffic_speed=float(self.traffic_speed),
-            traffic_density=float(self.traffic_density),
-            pedestrian_count=int(self.pedestrian_count),
-            pedestrian_density=float(self.pedestrian_density),
+            device_id=int(self.device),
+            car_count=self.car_count,
+            traffic_speed=self.traffic_speed,
+            traffic_density=self.traffic_density,
+            pedestrian_count=self.pedestrian_count,
+            pedestrian_density=self.pedestrian_density,
             ambient_light=float(self.ambient_light),
             dimming_level=float(self.dimming_level),
-            lamp_power=float(self.lamp_power),
+            lamp_power=self.lamp_power,
             weather=self.weather,
         )

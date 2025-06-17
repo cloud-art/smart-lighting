@@ -12,7 +12,7 @@ class DimmingCalculator:
         control_type = device_data.device.control_type
 
         if control_type == "simple_rules":
-            return DimmingCalculator._calculate_simple(control_type)
+            return DimmingCalculator._calculate_simple(device_data)
         elif control_type == "ai_model":
             return DimmingCalculator._calculate_ai(device_data)
         else:

@@ -8,7 +8,6 @@ class DeviceModel(Base):
     __tablename__ = "device"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    mqtt_topic = Column(String)
     control_type = Column(String)
     serial_number = Column(String, unique=True)
     lighting_class = Column(String)
