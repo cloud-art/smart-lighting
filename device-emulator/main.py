@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from paho.mqtt.client import Client
 from enum import Enum
+import pandas as pd
 
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
@@ -11,8 +12,8 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
 MQTT_USER = os.getenv("MQTT_USER", "default_user")
 MQTT_PASS = os.getenv("MQTT_PASS", "0000")
 
-PUBLISH_TOPIC = "devices/1/data"
-CONTROL_TOPIC = "devices/1/control"
+PUBLISH_TOPIC = "devices/10/data"
+CONTROL_TOPIC = "devices/10/control"
 
 
 class Command(Enum):
@@ -57,20 +58,37 @@ def main():
     client.loop_start()
 
     try:
-        data = []
-        with open("data.json") as f:
-            data = json.load(f)
+        df = pd.read_csv("data_ser.csv")
+        data = df.drop(
+            ["serial_number", "latitude", "longitude", "dimming_level"], axis=1
+        )
 
-        for hour_data in data:
+        for _, row in data.iterrows():
+            hour_data = row.to_dict()
             hour_data["dimming_level"] = current_state["dimming_level"]
             hour_data["lamp_power"] = current_state["dimming_level"] * 1.5
-            hour_data["device"] = 1
+            hour_data["device"] = 10
             payload = json.dumps(hour_data)
             client.publish(PUBLISH_TOPIC, payload)
             print(
                 f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n"
             )
             time.sleep(0.1)
+    # try:
+    #     data = []
+    #     with open("data.json") as f:
+    #         data = json.load(f)
+
+    #     for hour_data in data:
+    #         hour_data["dimming_level"] = current_state["dimming_level"]
+    #         hour_data["lamp_power"] = current_state["dimming_level"] * 1.5
+    #         hour_data["device"] = 1
+    #         payload = json.dumps(hour_data)
+    #         client.publish(PUBLISH_TOPIC, payload)
+    #         print(
+    #             f"[{datetime.now().isoformat()}] Published to {PUBLISH_TOPIC}: {payload} \n"
+    #         )
+    #         time.sleep(2)
     except KeyboardInterrupt:
         client.disconnect()
         print("Disconnected from broker.")

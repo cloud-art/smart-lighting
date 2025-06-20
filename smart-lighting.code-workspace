@@ -19,6 +19,10 @@
     {
       "name": "ai-model",
       "path": "./ai-model"
+    },
+    {
+      "name": "comparing",
+      "path": "./comparing"
     }
   ]
 }

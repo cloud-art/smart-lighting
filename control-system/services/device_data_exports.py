@@ -27,6 +27,8 @@ class DeviceDataExportsService:
         "lamp_power",
         "weather",
         "dimming_level",
+        "corrected_dimming_level",
+        "calculated_dimming_level",
     ]
 
     def __init__(self, db: Session):
@@ -64,6 +66,7 @@ class DeviceDataExportsService:
 
     def summary_to_csv_row(self, data: DeviceDataSummarySchema):
         corrected_dimming_level = data.corrected_dimming_level
+        calculated_dimming_level = data.calculated_dimming_level
 
         return [
             data.id,
@@ -80,7 +83,11 @@ class DeviceDataExportsService:
             data.device.lighting_class,
             data.lamp_power,
             data.weather,
+            data.dimming_level,
             corrected_dimming_level.dimming_level
             if corrected_dimming_level is not None
+            else None,
+            calculated_dimming_level.dimming_level
+            if calculated_dimming_level is not None
             else None,
         ]
